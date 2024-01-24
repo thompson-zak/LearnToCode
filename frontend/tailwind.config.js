@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         'github-dark-theme': '#0d1117',
+        'vs-dark-theme': "#1E1E1E",
       }
     },
   },
