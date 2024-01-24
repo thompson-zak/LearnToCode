@@ -13,6 +13,18 @@ defineProps({
     required: true
   }
 })
+
+import { ref, shallowRef } from 'vue'
+
+const MONACO_EDITOR_OPTIONS = {
+  automaticLayout: true,
+  formatOnType: true,
+  formatOnPaste: true,
+}
+
+const code = ref('# some code...')
+const editorRef = shallowRef()
+const handleMount = editor => (editorRef.value = editor)
 </script>
 
 <template>
@@ -27,9 +39,17 @@ defineProps({
       <div class="font-medium text-l mt-3">
           {{ gptPrompt }}
       </div>
-      <p>
-        TODO: The editor will go here.
-      </p>
+
+      <div class="h-[50vh]">
+        <vue-monaco-editor
+          v-model:value="code"
+          theme="vs-dark"
+          languge="python"
+          :options="MONACO_EDITOR_OPTIONS"
+          @mount="handleMount"
+        />
+      </div>
+
       <p class="font-light text-xs">
           Please execute this code on your machine. Our code execution engine is curently a work in progress!
       </p>

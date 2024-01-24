@@ -5,7 +5,11 @@ export default {
     './src/components/*.{html,js,vue}'
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'github-dark-theme': '#0d1117',
+      }
+    },
   },
   plugins: [],
 }
