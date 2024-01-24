@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+import { RouterLink } from 'vue-router';
+</script>
 
 <template>
   <main class="flex min-h-screen flex-col items-center justify-between p-24">
@@ -26,8 +28,8 @@
       </div>
 
       <div class="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="/tutorials/variables"
+        <RouterLink
+          to="/tutorials/variables"
           class="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
           <span class="mb-3 text-2xl font-semibold inline-block">
@@ -37,7 +39,7 @@
           <p class="m-0 max-w-[30ch] text-sm opacity-50">
             Learn about basic syntax and variables in this section, the building blocks of all code.
           </p>
-        </a>
+        </RouterLink>
 
         <a
           href="/tutorials/data"
