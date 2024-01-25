@@ -7,6 +7,25 @@ import { ref } from 'vue';
 const SECTION_DESCRIPTION = "These exercises are designed to help you understand the syntax of python and introduce you to the concept of variables."
 
 const display = ref(1);
+
+const tabs = [
+  {
+    id: 1,
+    title: "Exercise 1"
+  },
+  {
+    id: 2,
+    title: "Exercise 2"
+  },
+  {
+    id: 3,
+    title: "Exercise 3"
+  }
+]
+
+function switchTab(id) {
+  display.value = id;
+}
 </script>
 
 <template>
@@ -25,14 +44,8 @@ const display = ref(1);
               Variables
             </h1>
 
-            <div>
-              <TutorialTab tabTitle="Exercise 1" />
-            </div>
-            <div>
-              <TutorialTab tabTitle="Exercise 2" />
-            </div>
-            <div>
-              <TutorialTab tabTitle="Exercise 3" />
+            <div v-for="tab in tabs" :key="tab.id">
+              <TutorialTab :tabTitle=tab.title @click="switchTab(tab.id)" />
             </div>
 
           </div>
