@@ -8,7 +8,7 @@ defineProps({
     type: String,
     required: true
   },
-  gptPrompt: {
+  userPrompt: {
     type: String,
     required: true
   }
@@ -44,7 +44,7 @@ function formatCode() {
       </div>
 
       <div class="font-medium text-l mt-3">
-          {{ gptPrompt }}
+          {{ userPrompt }}
       </div>
 
       <div class="h-[60vh]">

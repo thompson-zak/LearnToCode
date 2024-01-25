@@ -23,6 +23,27 @@ const tabs = [
   }
 ]
 
+const exercises = [
+  {
+    id: 1,
+    section: "Variables",
+    title: "Exercise 1",
+    userPrompt: "Please code something..."
+  },
+  {
+    id: 2,
+    section: "Variables",
+    title: "Exercise 2",
+    userPrompt: "Please code the volume of a cup of coffee."
+  },
+  {
+    id: 3,
+    section: "Variables",
+    title: "Exercise 3",
+    userPrompt: "Please code the temperature conversion from farenheit to celsius."
+  }
+]
+
 function switchTab(id) {
   display.value = id;
 }
@@ -51,31 +72,14 @@ function switchTab(id) {
           </div>
           <div class="col-span-4">
 
-            <div>
-              <TutorialContent v-if="display == 1"
-                title="Exercise 1"
+            <div v-for="exercise in exercises" :key="exercise.id">
+              <TutorialContent v-if="display == exercise.id"
+                :title=exercise.title
                 :description=SECTION_DESCRIPTION
-                gptPrompt="Please code something..."
-                codeSkeleton="# Write your code for exercise 1 below."
-                />
+                :user-prompt=exercise.userPrompt
+              />
             </div>
-            <div>
-              <TutorialContent v-if="display == 2"
-                title="Exercise 2"
-                :description=SECTION_DESCRIPTION
-                gptPrompt="Please code the volume of a cup of coffee."
-                codeSkeleton="# Write your code for exercise 2 below."
-                />
-            </div>
-
-            <div>
-              <TutorialContent v-if="display == 3"
-                title="Exercise 3"
-                :description=SECTION_DESCRIPTION
-                gptPrompt="Please code the temperature conversion from farenheit to celsius."
-                codeSkeleton="# Write your code for exercise 3 below."
-                />
-            </div>
+            
           </div>
         </div>
       </div>
