@@ -50,10 +50,12 @@ prompts = {
 class CompletionsResponse(BaseModel):
     completions: dict = {}
     error: str = ""
+    executionTime: float = -1.0
 
 @app.get("/")
 async def root(section: str, id: int = -1, auth_header: Annotated[str | None, Header()] = None) -> CompletionsResponse:
 
+    startTime = time.time()
     requestedPrompts = []
 
     section = prompts.get(section, None)
@@ -73,30 +75,23 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
         
         for key in section:
             requestedPrompts.append((key, section.get(key)))
-    
-    print(requestedPrompts)
 
-    # Not sure this is guaranteed to load in order. Look to attach keys to prompts when gathering.
     completions = await asyncio.gather(*[getOpenaiCompletion(prompt[0], prompt[1]) for prompt in requestedPrompts])
 
     formattedCompletions = {}
     for completion in completions:
         formattedCompletions[completion["key"]] = completion["completion"]
-    return { "completions": formattedCompletions, "error": "" }
-
-
+    return { "completions": formattedCompletions, "error": "", "executionTime": round(time.time() - startTime, 2) }
 
 
 async def getOpenaiCompletion(key: int, prompt: str):
-    #completion = await client.chat.completions.create(
-    #    model="gpt-3.5-turbo",
-    #    messages=[
-    #        {"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
-    #        {"role": "user", "content": prompt}
-    #    ]
-    #)
-
-    completion = {}
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
+            {"role": "user", "content": prompt}
+        ]
+    )
 
     return { 
         "key": key,
