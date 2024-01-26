@@ -56,22 +56,42 @@ class CompletionsResponse(BaseModel):
 async def root(section: str, id: int = -1, auth_header: Annotated[str | None, Header()] = None) -> CompletionsResponse:
 
     startTime = time.time()
-    requestedPrompts = []
+
+    if(auth_header != settings.frontend_api_auth):
+        return { 
+            "completions": {}, 
+            "error": "You are not authorized to call this endpoint.", 
+            "executionTime": round(time.time() - startTime, 2)
+        }
 
     section = prompts.get(section, None)
     if(section == None):
-        return { "completions": {}, "error": "Invalid section provided."}
+        return { 
+            "completions": {}, 
+            "error": "Invalid section provided.", 
+            "executionTime": round(time.time() - startTime, 2)
+        }
+    
+    requestedPrompts = []
     
     if(id != -1):
         exercisePrompt = section.get(id, None)
         if(exercisePrompt == None):
-            return { "completions": {}, "error": "Exercise ID provided is invalid for given section"}
+            return { 
+                "completions": {}, 
+                "error": "Exercise ID provided is invalid for given section", 
+                "executionTime": round(time.time() - startTime, 2)
+            }
         
         requestedPrompts.append((id, exercisePrompt))
     else:
         # Empty dictionaries evaluate to false
         if(not section):
-            return { "completions": {}, "error": "Section provided is empty"}
+            return { 
+                "completions": {}, 
+                "error": "Section provided is empty", 
+                "executionTime": round(time.time() - startTime, 2)
+            }
         
         for key in section:
             requestedPrompts.append((key, section.get(key)))
@@ -81,7 +101,11 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
     formattedCompletions = {}
     for completion in completions:
         formattedCompletions[completion["key"]] = completion["completion"]
-    return { "completions": formattedCompletions, "error": "", "executionTime": round(time.time() - startTime, 2) }
+    return { 
+        "completions": formattedCompletions, 
+        "error": "", 
+        "executionTime": round(time.time() - startTime, 2) 
+    }
 
 
 async def getOpenaiCompletion(key: int, prompt: str):
