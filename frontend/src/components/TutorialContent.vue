@@ -11,6 +11,10 @@ defineProps({
   userPrompt: {
     type: String,
     required: true
+  },
+  gptContent: {
+    type: Object,
+    required: true
   }
 })
 
@@ -45,6 +49,10 @@ function formatCode() {
 
       <div class="font-medium text-l mt-3">
           {{ userPrompt }}
+      </div>
+
+      <div class="font-medium text-l mt-3">
+          {{ gptContent }}
       </div>
 
       <div class="h-[60vh]">

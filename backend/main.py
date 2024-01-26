@@ -1,7 +1,9 @@
 from typing import Annotated
 from fastapi import FastAPI, Header
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from openai import OpenAI
+import time
 
 
 class Settings(BaseSettings):
@@ -12,6 +14,14 @@ class Settings(BaseSettings):
 
 settings = Settings()
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 client = OpenAI(
     api_key=settings.openai_api_key
 )
@@ -58,6 +68,7 @@ async def root(section: str, id: int, auth_header: Annotated[str | None, Header(
 
 @app.get("/test")
 async def test():
+    time.sleep(5)
     return {
         "message": "Hello World!"
     }

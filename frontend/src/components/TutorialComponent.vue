@@ -14,8 +14,22 @@ import TutorialTab from './../components/TutorialTab.vue'
 import TutorialContent from './../components/TutorialContent.vue'
 import TutorialFooter from './../components/TutorialFooter.vue'
 import { ref } from 'vue';
+import { VueSpinner } from 'vue3-spinners';
 
 const display = ref(1);
+const content = ref("");
+const hasLoaded = ref(false);
+
+// First parameter is endpoint URL, second is header object
+// TODO - error handling
+let endpoint = import.meta.env.VITE_API_URL;
+fetch(endpoint + "/test", {})
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        content.value = data;
+        hasLoaded.value = true;
+    })
 
 function switchTab(id) {
   display.value = id;
@@ -43,16 +57,21 @@ function switchTab(id) {
               </div>
   
             </div>
-            <div class="col-span-4">
+            <div v-if="hasLoaded" class="col-span-4">
   
               <div v-for="exercise in exercises" :key="exercise.id">
                 <TutorialContent v-if="display == exercise.id"
                   :title=exercise.title
                   :description=sectionDescription
-                  :user-prompt=exercise.userPrompt
+                  :userPrompt=exercise.userPrompt
+                  :gptContent=content
                 />
               </div>
               
+            </div>
+
+            <div v-else class="col-span-4 h-[70vh]">
+                <VueSpinner size="20" color="red" />
             </div>
           </div>
         </div>
