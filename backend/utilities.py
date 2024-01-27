@@ -9,7 +9,6 @@ def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  p
     section = prompts.get(requestedSection, None)
     if(section == None): 
         raise HTTPException(status_code=400, detail="Invalid section provided.")
-            
     
     requestedPrompts = []
     
@@ -34,5 +33,12 @@ def formatCompletions(completionsWithKeys):
     formattedCompletions = {}
     for completion in completionsWithKeys:
         # TODO - parse actual completion into tokens (prompt, code outline, etc) for easier use on frontend
+        
+        # Key sections to parse
+        # "Prompt:"
+        # "Code Outline:"
+        # "Code:"
+        # "Explanation:"
+        
         formattedCompletions[completion["key"]] = completion["completion"]
     return formattedCompletions
