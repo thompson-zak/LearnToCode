@@ -6,10 +6,12 @@ from pydantic import BaseModel
 from openai import OpenAI
 import time
 import asyncio
+from utilities import *
 
 class Settings(BaseSettings):
     openai_api_key: str
     frontend_api_auth: str
+    api_auth_enabled: bool
 
     model_config = SettingsConfigDict(env_file=".env")
 
@@ -57,56 +59,16 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
 
     startTime = time.time()
 
-    if(auth_header != settings.frontend_api_auth):
-        return { 
-            "completions": {}, 
-            "error": "You are not authorized to call this endpoint.", 
-            "executionTime": round(time.time() - startTime, 2)
-        }
+    requestedPrompts = validateAndParsePrompts(section, id, auth_header, prompts, settings)
 
-    section = prompts.get(section, None)
-    if(section == None):
-        return { 
-            "completions": {}, 
-            "error": "Invalid section provided.", 
-            "executionTime": round(time.time() - startTime, 2)
-        }
+    completionsWithKeys = await asyncio.gather(*[getOpenaiCompletion(prompt[0], prompt[1]) for prompt in requestedPrompts])
+
+    formattedCompletions = formatCompletions(completionsWithKeys)
     
-    requestedPrompts = []
-    
-    if(id != -1):
-        exercisePrompt = section.get(id, None)
-        if(exercisePrompt == None):
-            return { 
-                "completions": {}, 
-                "error": "Exercise ID provided is invalid for given section", 
-                "executionTime": round(time.time() - startTime, 2)
-            }
-        
-        requestedPrompts.append((id, exercisePrompt))
-    else:
-        # Empty dictionaries evaluate to false
-        if(not section):
-            return { 
-                "completions": {}, 
-                "error": "Section provided is empty", 
-                "executionTime": round(time.time() - startTime, 2)
-            }
-        
-        for key in section:
-            requestedPrompts.append((key, section.get(key)))
-
-    completions = await asyncio.gather(*[getOpenaiCompletion(prompt[0], prompt[1]) for prompt in requestedPrompts])
-
-    formattedCompletions = {}
-    for completion in completions:
-        formattedCompletions[completion["key"]] = completion["completion"]
     return { 
         "completions": formattedCompletions, 
-        "error": "", 
         "executionTime": round(time.time() - startTime, 2) 
     }
-
 
 async def getOpenaiCompletion(key: int, prompt: str):
     completion = client.chat.completions.create(
@@ -120,7 +82,7 @@ async def getOpenaiCompletion(key: int, prompt: str):
     return { 
         "key": key,
         "completion": completion
-     }
+    }
 
 
 @app.get("/test")
