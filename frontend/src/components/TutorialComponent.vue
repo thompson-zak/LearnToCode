@@ -70,8 +70,10 @@ function switchTab(id) {
               
             </div>
 
-            <div v-else class="col-span-4 h-[70vh]">
-                <VueSpinner size="20" color="red" />
+            <div v-else class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">
+                <VueSpinner size="40" color="red"/>
+                <div class="h-5"></div>
+                <p>Using the power of AI to generate a custom lesson plan just for you</p>
             </div>
           </div>
         </div>
