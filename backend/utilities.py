@@ -83,7 +83,10 @@ def formatCompletions(completionsWithKeys):
             explanationKeywordLen = len(codeCommentKeyword)
         
         promptContent = content[promptIndex + len(promptKeyword) : outlineIndex].strip()
+
         outlineContent = content[outlineIndex + len(outlineKeyword) : codeIndex].strip()
+        trailingWordIndex = outlineContent.rindex(".")
+        outlineContent = outlineContent[0 : trailingWordIndex + 1]
 
         # Here we need special behavior to account for the possible differences in what the explanation section index may be
         # We are particularly concerned with inadvertently excluding the end of the code block denoted by triple backticks
