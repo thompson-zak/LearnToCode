@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from openai import OpenAI
 import time
 import asyncio
+import json
+from random import randint
 from utilities import *
 
 class Settings(BaseSettings):
@@ -84,10 +86,23 @@ async def getOpenaiCompletion(key: int, prompt: str):
         "completion": completion
     }
 
-
+# Endpoint used for development purposes to minimize actual calls to OpenAI services
 @app.get("/test")
-async def test():
-    time.sleep(5)
+async def test(requestTriple: bool = True):
+    # Simulates loading times for OpenAI requests
+    startTime = time.time()
+    time.sleep(8)
+
+    if requestTriple:
+        # Loads the pre-fetched and pre-formatted chat completion containing all 3 sample exercises
+        filePath = "./test_resources/sample_triple_formatted_completion.json"
+    else:
+        # Loads one of two pre-fetched and pre-formatted chat completion responses
+        filePath = "./test_resources/sample_formatted_completion_" + str(randint(1,2)) + ".json"
+
+    file = open(filePath)
+    formattedResponse = json.load(file)
     return {
-        "message": "Hello World!"
+        "completions": formattedResponse,
+        "exectionTime": round(time.time() - startTime, 2)
     }

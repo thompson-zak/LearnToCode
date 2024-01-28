@@ -1,0 +1,12 @@
+{
+    "1": {
+        "prompt": "Write a program that calculates the area of a rectangle. The user should be able to enter the length and width of the rectangle, and the program should output the calculated area.",
+        "outline": "1. Print a message asking the user for the length of the rectangle.\n2. Assign the user's input to a variable called \"length\" using the input() function.\n3. Print a message asking the user for the width of the rectangle.\n4. Assign the user's input to a variable called \"width\" using the input() function.\n5. Convert the values of the \"length\" and \"width\" variables to integers using the int() function.\n6. Calculate the area of the rectangle by multiplying the \"length\" and \"width\" variables together. Assign the result to a variable called \"area\".\n7. Print the calculated area of the rectangle.\n\nSample",
+        "code": "```python\n# Prompt the user for the length of the rectangle\nlength = input(\"Enter the length of the rectangle: \")\n\n# Prompt the user for the width of the rectangle\nwidth = input(\"Enter the width of the rectangle: \")\n\n# Convert the length and width to integers\nlength = int(length)\nwidth = int(width)\n\n# Calculate the area\narea = length * width\n\n# Print the calculated area\nprint(\"The area of the rectangle is:\", area)\n```",
+        "explanation": "This code will allow the user to enter the length and width of a rectangle as input. It will then calculate the area by multiplying the length and width variables together. Finally, it will print the result."
+    }
+}
+
+
+
+

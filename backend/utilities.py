@@ -69,18 +69,31 @@ def formatCompletions(completionsWithKeys):
         promptIndex = contentLowercase.index(promptKeyword)
         outlineIndex = contentLowercase.index(outlineKeyword)
         codeIndex = contentLowercase.index(codeKeyword)
+
+        # Sometimes the word "Explanation" will not show up, so we will need to index on the triple backticks at the end of the code
         explanationIndex = -1
+        explanationKeywordLen = -1
         try:
             explanationIndex = contentLowercase.index(explanationKeyword)
+            explanationKeywordLen = len(explanationKeyword)
         except:
             print("'Explanation:' was not found - instead indexing on ```")
             startIndex = contentLowercase.index(codeCommentKeyword)
             explanationIndex = contentLowercase.index(codeCommentKeyword, startIndex + len(codeCommentKeyword))
+            explanationKeywordLen = len(codeCommentKeyword)
         
-        promptContent = content[promptIndex + len(promptKeyword) : outlineIndex]
-        outlineContent = content[outlineIndex + len(outlineKeyword) : codeIndex]
-        codeContent = content[codeIndex + len(codeKeyword) : explanationIndex]
-        explanationContent= content[explanationIndex + len(explanationKeyword) : len(content)]
+        promptContent = content[promptIndex + len(promptKeyword) : outlineIndex].strip()
+        outlineContent = content[outlineIndex + len(outlineKeyword) : codeIndex].strip()
+
+        # Here we need special behavior to account for the possible differences in what the explanation section index may be
+        # We are particularly concerned with inadvertently excluding the end of the code block denoted by triple backticks
+        if explanationKeywordLen == 3:
+            codeContentEndingIndex = explanationIndex + 3
+        else:
+            codeContentEndingIndex = explanationIndex
+        codeContent = content[codeIndex + len(codeKeyword) : codeContentEndingIndex].strip()
+
+        explanationContent= content[explanationIndex + explanationKeywordLen : len(content)].strip()
 
         formattedCompletions[completionWithKey["key"]] = {
             "prompt": promptContent,
@@ -89,7 +102,8 @@ def formatCompletions(completionsWithKeys):
             "explanation": explanationContent
         }
 
-        print("----- Formatted OpenAI Response Object -----")
-        print(json.dumps(formattedCompletions, indent=4))
-        print("--------------------------------------------")
+    print("----- Formatted OpenAI Response Object -----")
+    print(json.dumps(formattedCompletions, indent=4))
+    print("--------------------------------------------")
+
     return formattedCompletions

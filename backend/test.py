@@ -3,7 +3,7 @@ import json
 
 
 def testformatCompletions1():
-    file = open('./test_resources/sample_completion.json')
+    file = open('./test_resources/sample_completion_1.json')
     completion = json.load(file)
     print("Loaded completion from file 1...")
     completionWithKey = [{

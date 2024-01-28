@@ -1,0 +1,8 @@
+{
+    "1": {
+        "prompt": "You are tasked with writing a code to calculate and display the area of a rectangle. The program should take in the length and width of the rectangle from the user as input, and output the calculated area.",
+        "outline": "1. Display a message asking the user to enter the length of the rectangle.\n2. Create a variable to store the user's input for length.\n3. Display a message asking the user to enter the width of the rectangle.\n4. Create a variable to store the user's input for width.\n5. Calculate the area of the rectangle by multiplying the length and width.\n6. Display the calculated area to the user.",
+        "code": "```python\n# Step 1\nprint(\"Please enter the length of the rectangle:\")\n\n# Step 2\nlength = float(input())\n\n# Step 3\nprint(\"Please enter the width of the rectangle:\")\n\n# Step 4\nwidth = float(input())\n\n# Step 5\narea = length * width\n\n# Step 6\nprint(\"The area of the rectangle is:\", area)\n```",
+        "explanation": "This program starts by displaying a message asking the user to enter the length of the rectangle. The user's input for the length is stored in the variable \"length\". Then, a similar process occurs to gather the width from the user and store it in the variable \"width\". Later, the program calculates the area of the rectangle by multiplying the length and width, and stores the result in the variable \"area\". Finally, the program displays the calculated area to the user."
+    }
+}
