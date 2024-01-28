@@ -17,7 +17,7 @@ import { ref } from 'vue';
 import { VueSpinner } from 'vue3-spinners';
 
 const display = ref(1);
-const content = ref("");
+const content = ref([{}, {}, {}]);
 const hasLoaded = ref(false);
 
 // First parameter is endpoint URL, second is header object
@@ -26,8 +26,12 @@ let endpoint = import.meta.env.VITE_API_URL;
 fetch(endpoint + "/test", {})
     .then(response => response.json())
     .then(data => {
-        console.log(data);
-        content.value = data;
+        const completions = data["completions"];
+        for (var key in completions) {
+          var index = Number(key)
+          content.value[index-1] = completions[key];
+        }
+        console.log(content)
         hasLoaded.value = true;
     })
 
@@ -63,8 +67,7 @@ function switchTab(id) {
                 <TutorialContent v-if="display == exercise.id"
                   :title=exercise.title
                   :description=sectionDescription
-                  :userPrompt=exercise.userPrompt
-                  :gptContent=content
+                  :content=content[exercise.listIndex]
                 />
               </div>
               

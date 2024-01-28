@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from fastapi import HTTPException
 import json
+import re
 
 def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  prompts: any, settings: BaseSettings):
     if(settings.api_auth_enabled and auth_header != settings.frontend_api_auth):
@@ -84,9 +85,17 @@ def formatCompletions(completionsWithKeys):
         
         promptContent = content[promptIndex + len(promptKeyword) : outlineIndex].strip()
 
+        # In some cases there are trailing words after the last step in the outline, which is not desirable.
+        # To fix this we find the last period in the text block, denoting the final item in the list and truncate from that point.
         outlineContent = content[outlineIndex + len(outlineKeyword) : codeIndex].strip()
         trailingWordIndex = outlineContent.rindex(".")
-        outlineContent = outlineContent[0 : trailingWordIndex + 1]
+        # Prepending a newline character will give all list numberings a common format
+        outlineContent = "\n" + outlineContent[0 : trailingWordIndex + 1]
+        outlineSteps = re.split(r'\n[0-9]+\.', outlineContent)
+        # After splitting the steps into an array, double check for empty values and remove
+        for outlineStep in outlineSteps:
+            if outlineStep == "":
+                outlineSteps.remove(outlineStep)
 
         # Here we need special behavior to account for the possible differences in what the explanation section index may be
         # We are particularly concerned with inadvertently excluding the end of the code block denoted by triple backticks
@@ -100,7 +109,7 @@ def formatCompletions(completionsWithKeys):
 
         formattedCompletions[completionWithKey["key"]] = {
             "prompt": promptContent,
-            "outline": outlineContent,
+            "outline": outlineSteps,
             "code": codeContent,
             "explanation": explanationContent
         }
