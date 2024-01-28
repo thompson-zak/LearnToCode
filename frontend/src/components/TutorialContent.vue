@@ -62,16 +62,20 @@ function incrementStep() {
           {{ content["prompt"] }}
       </div>
 
-      <div class="font-medium text-l mt-3">
-          <span>Step {{ currentOutlineStep + 1 }}:</span>
-          <span>{{ content["outline"][currentOutlineStep] }}</span>
-
-          <span class="ml-2" @click="decrementStep">
-            <IconSvg name="angles-left" size="15px" class="inline"/>Prev
+      <div class="grid grid-cols-10 w-full font-medium text-l mt-3">
+          <span class="col-span-8">
+            <span>Step {{ currentOutlineStep + 1 }}:</span>
+            <span>{{ content["outline"][currentOutlineStep] }}</span>
           </span>
-          |
-          <span @click="incrementStep">
-            Next<IconSvg name="angles-right" size="15px" class="inline"/>
+
+          <span class="col-span-2 text-center">
+            <span class="ml-2 cursor-pointer" @click="decrementStep">
+              <IconSvg name="angles-left" size="15px" class="inline"/>Prev
+            </span>
+            |
+            <span class="cursor-pointer" @click="incrementStep">
+              Next<IconSvg name="angles-right" size="15px" class="inline"/>
+            </span>
           </span>
       </div>
 
