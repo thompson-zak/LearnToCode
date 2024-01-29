@@ -14,27 +14,26 @@ const props = defineProps({
   }
 })
 
-import { ref, shallowRef } from 'vue'
-import Constants from '../constants/config.js'
-
-const MONACO_EDITOR_OPTIONS = {
-  automaticLayout: true,
-  formatOnType: true,
-  formatOnPaste: true,
-  autoIndent: true,
-}
-
-const code = ref(Constants.CODE_SKELETON)
-const editorRef = shallowRef()
-const handleMount = editor => (editorRef.value = editor)
+import { ref } from 'vue'
+import Codemirror from "codemirror-editor-vue3";
+// language
+import "codemirror/mode/python/python.js";
+// placeholder
+import "codemirror/addon/display/placeholder.js";
+// theme
+import "codemirror/theme/dracula.css";
 
 const currentOutlineStep = ref(0)
 const showModal = ref(false)
-
-function formatCode() {
-  console.log('this is happening on keyup')
-  editorRef.value?.getAction('editor.action.formatDocument').run()
-}
+const code = ref(
+`def main():
+  print("Hello World!")
+}`
+);
+const cmOptions = {
+        mode: "text/x-python", // Language mode
+        theme: "dracula", // Theme
+      }
 
 function decrementStep() {
   if (currentOutlineStep.value > 0) {
@@ -81,13 +80,10 @@ function incrementStep() {
       </div>
 
       <div class="h-[60vh] mt-3">
-        <vue-monaco-editor
+        <Codemirror
           v-model:value="code"
-          theme="vs-dark"
-          languge="python"
-          :options="MONACO_EDITOR_OPTIONS"
-          @mount="handleMount"
-          @keyup="formatCode"
+          :options="cmOptions"
+          placeholder="test placeholder"
         />
       </div>
 
