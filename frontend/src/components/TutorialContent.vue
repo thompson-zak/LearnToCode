@@ -29,6 +29,7 @@ const editorRef = shallowRef()
 const handleMount = editor => (editorRef.value = editor)
 
 const currentOutlineStep = ref(0)
+const showModal = ref(false)
 
 function formatCode() {
   console.log('this is happening on keyup')
@@ -90,8 +91,36 @@ function incrementStep() {
         />
       </div>
 
-      <p class="font-light text-xs">
-          Please execute this code on your machine. Our code execution engine is curently a work in progress!
-      </p>
+      <div class="grid grid-cols-10 w-full mt-3">
+        <p class="font-light text-xs col-span-9">
+            Please execute this code on your machine. Our code execution engine is curently a work in progress!
+        </p>
+        <div class="col-span-1">
+          <span class="float-right" title="Send Help!" @click="showModal = true">
+            <IconSvg class="bg-gray-400 rounded-full p-2" name="lightbulb" size="40px" color="yellow"/>
+          </span>
+        </div>
+      </div>
+
+      <vue-final-modal
+        v-bind="$attrs"
+        v-model="showModal"
+        classes="flex justify-center items-center"
+        content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
+      >
+        <span class="mr-8 text-2xl font-bold">
+          <h4>Code Hints and Explanation</h4>
+        </span>
+        <hr/>
+        <div class="flex-grow overflow-y-auto">
+          <span>{{ content["code"] }}</span>
+          <hr/>
+          <span>{{ content["explanation"] }}</span>
+        </div>
+        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showModal = false">
+          <IconSvg name="x" size="15px" />
+        </button>
+      </vue-final-modal>
+
   </div>
 </template>
