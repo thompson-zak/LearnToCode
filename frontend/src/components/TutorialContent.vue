@@ -20,6 +20,8 @@ import Codemirror from "codemirror-editor-vue3";
 import "codemirror/mode/python/python.js";
 // placeholder
 import "codemirror/addon/display/placeholder.js";
+// autorefresh
+import "codemirror/addon/display/autorefresh.js";
 // theme
 import "codemirror/theme/dracula.css";
 
@@ -30,10 +32,19 @@ const code = ref(
   print("Hello World!")
 }`
 );
+const exampleCode = ref(props.content["code"])
+
 const cmOptions = {
         mode: "text/x-python", // Language mode
         theme: "dracula", // Theme
       }
+
+const cmExampleOptions = {
+  mode: "text/x-python", // Language mode
+  theme: "dracula", // Theme
+  readOnly: true, // Read Only
+  autoRefresh: true, // Allow for autorefresh
+}
 
 function decrementStep() {
   if (currentOutlineStep.value > 0) {
@@ -83,7 +94,6 @@ function incrementStep() {
         <Codemirror
           v-model:value="code"
           :options="cmOptions"
-          placeholder="test placeholder"
         />
       </div>
 
@@ -109,7 +119,13 @@ function incrementStep() {
         </span>
         <hr/>
         <div class="flex-grow overflow-y-auto">
-          <span>{{ content["code"] }}</span>
+          <span>
+            <Codemirror
+              v-model:value="exampleCode"
+              :options="cmExampleOptions"
+            />
+            {{  }}
+          </span>
           <hr/>
           <span>{{ content["explanation"] }}</span>
         </div>

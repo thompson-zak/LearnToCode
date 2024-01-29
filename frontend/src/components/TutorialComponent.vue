@@ -31,7 +31,6 @@ fetch(endpoint + "/test", {})
           var index = Number(key)
           content.value[index-1] = completions[key];
         }
-        console.log(content)
         hasLoaded.value = true;
     })
 
