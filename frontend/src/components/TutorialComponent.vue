@@ -63,11 +63,13 @@ function switchTab(id) {
             <div v-if="hasLoaded" class="col-span-4">
   
               <div v-for="exercise in exercises" :key="exercise.id">
-                <TutorialContent v-if="display == exercise.id"
-                  :title=exercise.title
-                  :description=sectionDescription
-                  :content=content[exercise.listIndex]
-                />
+                <KeepAlive>
+                  <TutorialContent v-if="display == exercise.id"
+                    :title=exercise.title
+                    :description=sectionDescription
+                    :content=content[exercise.listIndex]
+                  />
+                </KeepAlive>
               </div>
               
             </div>
