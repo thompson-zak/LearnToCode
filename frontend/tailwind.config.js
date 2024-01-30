@@ -9,6 +9,7 @@ export default {
       colors: {
         'github-dark-theme': '#0d1117',
         'vs-dark-theme': "#1E1E1E",
+        'dracula-theme': "#282a36",
       }
     },
   },

@@ -36,13 +36,14 @@ const code = ref(
 }`
 );
 const exampleCode = ref(props.content["code"])
+const outputResult = ref("")
 
 const cmOptions = {
         mode: "text/x-python", // Language mode
         theme: "dracula", // Theme
       }
 
-const cmExampleOptions = {
+const cmReadOnlyOptions = {
   mode: "text/x-python", // Language mode
   theme: "dracula", // Theme
   readOnly: true, // Read Only
@@ -60,6 +61,21 @@ function incrementStep() {
     currentOutlineStep.value = currentOutlineStep.value + 1;
   }
 }
+
+function executeCode() {
+  // First, remove previous output so there's no confusion
+  outputResult.value = ""
+
+  // First parameter is endpoint URL, second is header object
+  // TODO - error handling
+  let endpoint = import.meta.env.VITE_API_URL;
+  fetch(endpoint + "/execute/code/test", {})
+      .then(response => response.json())
+      .then(data => {
+          const output = data["output"];
+          outputResult.value = output;
+      })
+}
 </script>
 
 <template>
@@ -76,7 +92,7 @@ function incrementStep() {
           {{ content["prompt"] }}
       </div>
 
-      <div class="grid grid-cols-10 w-full font-medium text-l mt-3">
+      <div class="grid grid-cols-10 w-full font-medium text-l my-3">
           <span class="col-span-8">
             <span>Step {{ currentOutlineStep + 1 }}:</span>
             <span>{{ content["outline"][currentOutlineStep] }}</span>
@@ -93,24 +109,30 @@ function incrementStep() {
           </span>
       </div>
 
-      <div class="h-[60vh] mt-3">
+      <hr/>
+
+      <h2 class="mt-3">Code:</h2>
+      <div class="h-[40vh]">
         <Codemirror
           v-model:value="code"
           :options="cmOptions"
         />
       </div>
 
-      <div class="grid grid-cols-10 w-full mt-3">
-        <p class="font-light text-xs col-span-8">
-            Please execute this code on your machine. Our code execution engine is curently a work in progress!
-        </p>
-        <div class="col-span-2 text-right">
-          <span class="inline-block mr-2">
-            <button class="bg-green-400 rounded-lg font-bold text-l border-black border p-2.5" @click="console.log('This button does nothing!')">Run Code</button>
-          </span>
-          <span class="float-right" title="Send Help!" @click="showModal = true">
-            <IconSvg class="bg-gray-400 rounded-full p-2" name="lightbulb" size="40px" color="yellow"/>
-          </span>
+      <h2 class="mt-3">Output:</h2>
+      <div class="h-[10vh]">
+        <Codemirror
+          v-model:value="outputResult"
+          :options="cmReadOnlyOptions"
+        />
+      </div>
+
+      <div class="w-full mt-3 align-middle">
+        <div class="float-left" title="Send Help!" @click="showModal = true">
+          <IconSvg class="bg-gray-400 rounded-full p-2" name="lightbulb" size="40px" color="yellow"/>
+        </div>
+        <div class="float-right">
+          <button class="bg-green-400 rounded-lg font-bold text-l border-black border p-2.5" @click="executeCode">Run Code</button>
         </div>
       </div>
 
@@ -128,9 +150,8 @@ function incrementStep() {
           <span>
             <Codemirror
               v-model:value="exampleCode"
-              :options="cmExampleOptions"
+              :options="cmReadOnlyOptions"
             />
-            {{  }}
           </span>
           <hr/>
           <span>{{ content["explanation"] }}</span>
