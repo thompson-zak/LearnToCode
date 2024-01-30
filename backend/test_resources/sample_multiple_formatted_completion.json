@@ -25,19 +25,5 @@
         ],
         "code": "```python\n# Step 1\nprint(\"Please enter the length of the rectangle:\")\n\n# Step 2\nlength = float(input())\n\n# Step 3\nprint(\"Please enter the width of the rectangle:\")\n\n# Step 4\nwidth = float(input())\n\n# Step 5\narea = length * width\n\n# Step 6\nprint(\"The area of the rectangle is:\", area)\n```",
         "explanation": "This program starts by displaying a message asking the user to enter the length of the rectangle. The user's input for the length is stored in the variable \"length\". Then, a similar process occurs to gather the width from the user and store it in the variable \"width\". Later, the program calculates the area of the rectangle by multiplying the length and width, and stores the result in the variable \"area\". Finally, the program displays the calculated area to the user."
-    },
-    "3": {
-        "prompt": "Write a program that calculates the area of a rectangle. The user should be able to enter the length and width of the rectangle, and the program should output the calculated area.",
-        "outline": [
-            " Print a message asking the user for the length of the rectangle.",
-            " Assign the user's input to a variable called \"length\" using the input() function.",
-            " Print a message asking the user for the width of the rectangle.",
-            " Assign the user's input to a variable called \"width\" using the input() function.",
-            " Convert the values of the \"length\" and \"width\" variables to integers using the int() function.",
-            " Calculate the area of the rectangle by multiplying the \"length\" and \"width\" variables together. Assign the result to a variable called \"area\".",
-            " Print the calculated area of the rectangle."
-        ],
-        "code": "```python\n# Prompt the user for the length of the rectangle\nlength = input(\"Enter the length of the rectangle: \")\n\n# Prompt the user for the width of the rectangle\nwidth = input(\"Enter the width of the rectangle: \")\n\n# Convert the length and width to integers\nlength = int(length)\nwidth = int(width)\n\n# Calculate the area\narea = length * width\n\n# Print the calculated area\nprint(\"The area of the rectangle is:\", area)\n```",
-        "explanation": "This code will allow the user to enter the length and width of a rectangle as input. It will then calculate the area by multiplying the length and width variables together. Finally, it will print the result."
     }
 }

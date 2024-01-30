@@ -34,8 +34,7 @@ client = OpenAI(
 prompts = {
     "Variables": {
         1: "Please provide a prompt and code outline for a very basic problem to help a student who has never coded before learn python syntax and variables.",
-        2: "Please provide a prompt and code outline for a problem to help a student who has never coded before learn python syntax and variables.",
-        3: "Please provide a prompt and code outline for a challenging problem to help a student who has never coded before learn python syntax and variables."
+        2: "Please provide a prompt and code outline for a problem to help a student who has never coded before learn python syntax and variables."
     },
     "Data": {},
     "Conditionals": {},
@@ -105,7 +104,7 @@ async def test(requestTriple: bool = True):
 
     if requestTriple:
         # Loads the pre-fetched and pre-formatted chat completion containing all 3 sample exercises
-        filePath = "./test_resources/sample_triple_formatted_completion.json"
+        filePath = "./test_resources/sample_multiple_formatted_completion.json"
     else:
         # Loads one of two pre-fetched and pre-formatted chat completion responses
         filePath = "./test_resources/sample_formatted_completion_" + str(randint(1,2)) + ".json"
