@@ -86,6 +86,16 @@ async def getOpenaiCompletion(key: int, prompt: str):
         "completion": completion
     }
 
+@app.get("/execute/code")
+async def executeCode(code: str, auth_header: Annotated[str | None, Header()] = None):
+    validateCode(code, auth_header)
+    return { "output": "This is not implemented yet!"}
+
+@app.get("/execute/code/test")
+async def executeCodeTest():
+    time.sleep(3)
+    return { "output": "Hello World!"}
+
 # Endpoint used for development purposes to minimize actual calls to OpenAI services
 @app.get("/test")
 async def test(requestTriple: bool = True):

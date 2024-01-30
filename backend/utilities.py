@@ -3,9 +3,18 @@ from fastapi import HTTPException
 import json
 import re
 
-def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  prompts: any, settings: BaseSettings):
+def validateAuthHeader(auth_header: str, settings: BaseSettings):
     if(settings.api_auth_enabled and auth_header != settings.frontend_api_auth):
         raise HTTPException(status_code=400, detail="You are not authorized to call this endpoint.")
+
+
+def validateCode(code: str, auth_header: str, settings: BaseSettings):
+    validateAuthHeader(auth_header, settings)
+    # TODO - validate code (ensure no malicious functions, ensure it can be 'compiled')
+
+
+def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  prompts: any, settings: BaseSettings):
+    validateAuthHeader(auth_header, settings)
             
     section = prompts.get(requestedSection, None)
     if(section == None): 
