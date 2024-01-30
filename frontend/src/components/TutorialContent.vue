@@ -112,11 +112,17 @@ function executeCode() {
       <hr/>
 
       <h2 class="mt-3">Code:</h2>
-      <div class="h-[40vh]">
+      <div class="relative h-[40vh]">
         <Codemirror
           v-model:value="code"
           :options="cmOptions"
         />
+        <div class="absolute top-0 right-0 z-10" title="Send Help!" @click="showModal = true">
+          <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1" name="lightbulb" size="30px" color="yellow"/>
+        </div>
+        <div class="absolute bottom-0 right-0 z-10">
+          <button class="bg-green-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="executeCode">Run Code</button>
+        </div>
       </div>
 
       <h2 class="mt-3">Output:</h2>
@@ -125,15 +131,6 @@ function executeCode() {
           v-model:value="outputResult"
           :options="cmReadOnlyOptions"
         />
-      </div>
-
-      <div class="w-full mt-3 align-middle">
-        <div class="float-left" title="Send Help!" @click="showModal = true">
-          <IconSvg class="bg-gray-400 rounded-full p-2" name="lightbulb" size="40px" color="yellow"/>
-        </div>
-        <div class="float-right">
-          <button class="bg-green-400 rounded-lg font-bold text-l border-black border p-2.5" @click="executeCode">Run Code</button>
-        </div>
       </div>
 
       <vue-final-modal
