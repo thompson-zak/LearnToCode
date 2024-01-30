@@ -15,6 +15,8 @@ const props = defineProps({
 })
 
 import { ref } from 'vue'
+
+// *** Code Mirror Dependencies *** //
 import Codemirror from "codemirror-editor-vue3";
 // language
 import "codemirror/mode/python/python.js";
@@ -24,6 +26,7 @@ import "codemirror/addon/display/placeholder.js";
 import "codemirror/addon/display/autorefresh.js";
 // theme
 import "codemirror/theme/dracula.css";
+// ******************************* //
 
 const currentOutlineStep = ref(0)
 const showModal = ref(false)
@@ -98,10 +101,13 @@ function incrementStep() {
       </div>
 
       <div class="grid grid-cols-10 w-full mt-3">
-        <p class="font-light text-xs col-span-9">
+        <p class="font-light text-xs col-span-8">
             Please execute this code on your machine. Our code execution engine is curently a work in progress!
         </p>
-        <div class="col-span-1">
+        <div class="col-span-2 text-right">
+          <span class="inline-block mr-2">
+            <button class="bg-green-400 rounded-lg font-bold text-l border-black border p-2.5" @click="console.log('This button does nothing!')">Run Code</button>
+          </span>
           <span class="float-right" title="Send Help!" @click="showModal = true">
             <IconSvg class="bg-gray-400 rounded-full p-2" name="lightbulb" size="40px" color="yellow"/>
           </span>
