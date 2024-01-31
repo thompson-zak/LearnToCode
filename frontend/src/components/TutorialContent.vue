@@ -31,9 +31,8 @@ import "codemirror/theme/dracula.css";
 const currentOutlineStep = ref(0)
 const showModal = ref(false)
 const code = ref(
-`def main():
-  print("Hello World!")
-}`
+`message = "Hello World!"
+print(message)`
 );
 const exampleCode = ref(props.content["code"])
 const outputResult = ref("")
@@ -69,7 +68,12 @@ function executeCode() {
   // First parameter is endpoint URL, second is header object
   // TODO - error handling
   let endpoint = import.meta.env.VITE_API_URL;
-  fetch(endpoint + "/execute/code/test", {})
+  let requestOptions = { 
+    method: "POST",
+    body: JSON.stringify({ "code" : String(code.value) })
+  }
+  console.log(requestOptions)
+  fetch(endpoint + "/execute/code", requestOptions)
       .then(response => response.json())
       .then(data => {
           const output = data["output"];

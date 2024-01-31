@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel
@@ -9,6 +9,8 @@ import asyncio
 import json
 from random import randint
 from utilities import *
+from io import StringIO
+from contextlib import redirect_stdout
 
 class Settings(BaseSettings):
     openai_api_key: str
@@ -33,7 +35,7 @@ client = OpenAI(
 
 prompts = {
     "Variables": {
-        1: "Please provide a prompt and code outline for a very basic problem to help a student who has never coded before learn python syntax and variables.",
+        1: "Please provide a prompt and code outline for a very basic problem to help a student who has never coded before learn python syntax and variables. This code should not contain any input statements and should rely only a print statements for displaying output.",
         2: "Please provide a prompt and code outline for a problem to help a student who has never coded before learn python syntax and variables."
     },
     "Data": {},
@@ -85,15 +87,40 @@ async def getOpenaiCompletion(key: int, prompt: str):
         "completion": completion
     }
 
-@app.get("/execute/code")
-async def executeCode(code: str, auth_header: Annotated[str | None, Header()] = None):
-    validateCode(code, auth_header)
-    return { "output": "This is not implemented yet!"}
 
-@app.get("/execute/code/test")
+@app.post("/execute/code")
+async def executeCode(request: Request, auth_header: Annotated[str | None, Header()] = None):
+    validateCode(code, auth_header)
+    jsonRequest = await request.json()
+    code = jsonRequest["code"]
+
+    error = None
+    f = StringIO()
+    with redirect_stdout(f):
+        try:
+            # TODO - disallow builtins
+            # TODO - spawn this off as a new process so that any segfault will not kill fastapi runner
+            exec(code) in {'__builtins__': {}}, {}
+        except Exception as e:
+            error = e
+
+    if error is not None:
+        print(error)
+        raise HTTPException(status_code=400, detail=str(error))
+    
+    s = f.getvalue()
+
+    return { 
+        "output": s 
+    }
+    
+
+@app.post("/execute/code/test")
 async def executeCodeTest():
     time.sleep(3)
-    return { "output": "Hello World!"}
+    return { 
+        "output": "Hello World!" 
+    }
 
 # Endpoint used for development purposes to minimize actual calls to OpenAI services
 @app.get("/test")

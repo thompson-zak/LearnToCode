@@ -8,7 +8,7 @@ def validateAuthHeader(auth_header: str, settings: BaseSettings):
         raise HTTPException(status_code=400, detail="You are not authorized to call this endpoint.")
 
 
-def validateCode(code: str, auth_header: str, settings: BaseSettings):
+def validateCode(codeRequest: object, auth_header: str, settings: BaseSettings):
     validateAuthHeader(auth_header, settings)
     # TODO - validate code (ensure no malicious functions, ensure it can be 'compiled')
 
@@ -50,24 +50,22 @@ def formatCompletions(completionsWithKeys):
         codeCommentKeyword = "```".lower()
 
         completion = completionWithKey["completion"]
+        if not isinstance(completion, dict):
+            completion = vars(completion)
 
-        completions = completion.get("completions", None)
-        if completions == None or len(completions) == 0:
-            raise HTTPException("OpenAI response does not contain at least 1 completion or the completion is empty.")
-
-        item = completions.get("1", None)
-        if item == None or len(item) == 0:
-            raise HTTPException("OpenAI response does not contain at least 1 item or first item is empty.")
-
-        choices = item.get("choices", None)
+        choices = completion.get("choices", None)
         if choices == None or len(choices) == 0:
             raise HTTPException("OpenAI response does not contain choices object or choices object is empty")
         
         firstChoice = choices[0]
+        if not isinstance(firstChoice, dict):
+            firstChoice = vars(firstChoice)
         if firstChoice == None or len(firstChoice) == 0:
             raise HTTPException("OpenAI response first choice is empty.")
         
         message = firstChoice.get("message", None)
+        if not isinstance(message, dict):
+            message = vars(message)
         if message == None or len(message) == 0:
             raise HTTPException("OpenAI first choice does not contain message or message object is empty")
         
