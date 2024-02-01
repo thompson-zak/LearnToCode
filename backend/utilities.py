@@ -44,14 +44,18 @@ def formatCompletions(completionsWithKeys):
     for completionWithKey in completionsWithKeys:
         # Key sections to parse - may need to add flexibility if ChatGPT ever starts to switch up ordering of sections
         promptKeyword = "Prompt:".lower()
-        outlineKeyword = "Code outline:".lower()
-        codeKeyword = "Code:".lower()
+        outlineKeyword = "Steps to Complete:".lower()
+        codeKeyword = "Code Sample:".lower()
         explanationKeyword = "Explanation:".lower()
         codeCommentKeyword = "```".lower()
 
         completion = completionWithKey["completion"]
         if not isinstance(completion, dict):
             completion = vars(completion)
+
+        print("------------Completion------------")
+        print(completion)
+        print("----------------------------------")
 
         choices = completion.get("choices", None)
         if choices == None or len(choices) == 0:
@@ -73,28 +77,19 @@ def formatCompletions(completionsWithKeys):
         if content == None or len(content) == 0:
             raise HTTPException("OpenAI message does not contain content or content string is empty")
         
+        # TODO - change the rely on the <b> and <hr> tags that I ask GPT to insert to mark sections and keywords
+
         contentLowercase = content.lower()
-        promptIndex = contentLowercase.index(promptKeyword)
-        outlineIndex = contentLowercase.index(outlineKeyword)
-        codeIndex = contentLowercase.index(codeKeyword)
-
-        # Sometimes the word "Explanation" will not show up, so we will need to index on the triple backticks at the end of the code
-        explanationIndex = -1
-        explanationKeywordLen = -1
-        try:
-            explanationIndex = contentLowercase.index(explanationKeyword)
-            explanationKeywordLen = len(explanationKeyword)
-        except:
-            print("'Explanation:' was not found - instead indexing on ```")
-            startIndex = contentLowercase.index(codeCommentKeyword)
-            explanationIndex = contentLowercase.index(codeCommentKeyword, startIndex + len(codeCommentKeyword))
-            explanationKeywordLen = len(codeCommentKeyword)
+        endBoldTagKeyword = "</b>"
+        hrTagKeyword = "<hr>"
         
-        promptContent = content[promptIndex + len(promptKeyword) : outlineIndex].strip()
+        promptStartIndex = contentLowercase.index(endBoldTagKeyword)
+        promptEndIndex = contentLowercase.index(hrTagKeyword, promptStartIndex)
+        promptContent = content[ promptStartIndex + len(endBoldTagKeyword) : promptEndIndex ].strip()
 
-        # In some cases there are trailing words after the last step in the outline, which is not desirable.
-        # To fix this we find the last period in the text block, denoting the final item in the list and truncate from that point.
-        outlineContent = content[outlineIndex + len(outlineKeyword) : codeIndex].strip()
+        outlineStartIndex = contentLowercase.index(endBoldTagKeyword, promptEndIndex)
+        outlineEndIndex = contentLowercase.index(hrTagKeyword, outlineStartIndex)
+        outlineContent = content[ outlineStartIndex + len(endBoldTagKeyword) : outlineEndIndex ].strip()
         trailingWordIndex = outlineContent.rindex(".")
         # Prepending a newline character will give all list numberings a common format
         outlineContent = "\n" + outlineContent[0 : trailingWordIndex + 1]
@@ -104,15 +99,17 @@ def formatCompletions(completionsWithKeys):
             if outlineStep == "":
                 outlineSteps.remove(outlineStep)
 
-        # Here we need special behavior to account for the possible differences in what the explanation section index may be
-        # We are particularly concerned with inadvertently excluding the end of the code block denoted by triple backticks
-        if explanationKeywordLen == 3:
-            codeContentEndingIndex = explanationIndex + 3
-        else:
-            codeContentEndingIndex = explanationIndex
-        codeContent = content[codeIndex + len(codeKeyword) : codeContentEndingIndex].strip()
+        codeStartIndex = contentLowercase.index(endBoldTagKeyword, outlineEndIndex)
+        codeEndIndex = contentLowercase.index(hrTagKeyword, codeStartIndex)
+        codeContent = content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ].strip()
 
-        explanationContent= content[explanationIndex + explanationKeywordLen : len(content)].strip()
+        explanationStartIndex = contentLowercase.index(endBoldTagKeyword, codeEndIndex)
+        try:
+            explanationEndIndex = contentLowercase.index(hrTagKeyword, explanationStartIndex)
+        except ValueError as e:
+            # This means the <hr> tag was not found from the beginning of the last block to end of text. Therefore, take end of string as final index.
+            explanationEndIndex = len(contentLowercase)
+        explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ].strip()
 
         formattedCompletions[completionWithKey["key"]] = {
             "prompt": promptContent,

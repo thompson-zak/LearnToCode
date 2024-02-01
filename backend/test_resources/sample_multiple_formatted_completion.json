@@ -1,29 +1,22 @@
 {
     "1": {
-        "prompt": "Write a program that calculates the area of a rectangle. The user should be able to enter the length and width of the rectangle, and the program should output the calculated area.",
+        "prompt": "Write a program in Python to calculate the area of a rectangle given its length and width.",
         "outline": [
-            " Print a message asking the user for the length of the rectangle.",
-            " Assign the user's input to a variable called \"length\" using the input() function.",
-            " Print a message asking the user for the width of the rectangle.",
-            " Assign the user's input to a variable called \"width\" using the input() function.",
-            " Convert the values of the \"length\" and \"width\" variables to integers using the int() function.",
-            " Calculate the area of the rectangle by multiplying the \"length\" and \"width\" variables together. Assign the result to a variable called \"area\".",
-            " Print the calculated area of the rectangle."
+            " Define two variables to store the length and width of the rectangle.",
+            " Assign specific values to the variables.",
+            " Calculate the area of the rectangle using the formula: area = length * width.",
+            " Display the calculated area using a print statement."
         ],
-        "code": "```python\n# Prompt the user for the length of the rectangle\nlength = input(\"Enter the length of the rectangle: \")\n\n# Prompt the user for the width of the rectangle\nwidth = input(\"Enter the width of the rectangle: \")\n\n# Convert the length and width to integers\nlength = int(length)\nwidth = int(width)\n\n# Calculate the area\narea = length * width\n\n# Print the calculated area\nprint(\"The area of the rectangle is:\", area)\n```",
-        "explanation": "This code will allow the user to enter the length and width of a rectangle as input. It will then calculate the area by multiplying the length and width variables together. Finally, it will print the result."
+        "code": "```python\n# Step 1: Define variables for length and width\nlength = 5\nwidth = 3\n\n# Step 2: Assign specific values\n# Here, length = 5 and width = 3\n\n# Step 3: Calculate the area\narea = length * width\n\n# Step 4: Display the calculated area\nprint(\"The area of the rectangle is: \", area)\n```",
+        "explanation": "1. The code begins by defining two variables, `length` and `width`, to store the length and width of the rectangle, respectively.\n2. In this example, the length is assigned the value 5, and the width is assigned the value 3.\n3. The area of a rectangle can be calculated by multiplying its length and width together. This calculation is performed by assigning the result to the variable `area`.\n4. Finally, the calculated area is displayed using a print statement, with an appropriate message to provide context.\n\nNote: Since there are no input statements and the values for length and width are directly assigned in the code, the output will always be the same. However, variables can be modified to input values from the user if desired."
     },
     "2": {
-        "prompt": "You are tasked with writing a code to calculate and display the area of a rectangle. The program should take in the length and width of the rectangle from the user as input, and output the calculated area.",
+        "prompt": "Create a simple program that prints your name, age, and favorite color.",
         "outline": [
-            " Display a message asking the user to enter the length of the rectangle.",
-            " Create a variable to store the user's input for length.",
-            " Display a message asking the user to enter the width of the rectangle.",
-            " Create a variable to store the user's input for width.",
-            " Calculate the area of the rectangle by multiplying the length and width.",
-            " Display the calculated area to the user."
+            " Define three variables: name, age, and favorite_color, and assign values to them.",
+            " Use print statements to display your name, age, and favorite color."
         ],
-        "code": "```python\n# Step 1\nprint(\"Please enter the length of the rectangle:\")\n\n# Step 2\nlength = float(input())\n\n# Step 3\nprint(\"Please enter the width of the rectangle:\")\n\n# Step 4\nwidth = float(input())\n\n# Step 5\narea = length * width\n\n# Step 6\nprint(\"The area of the rectangle is:\", area)\n```",
-        "explanation": "This program starts by displaying a message asking the user to enter the length of the rectangle. The user's input for the length is stored in the variable \"length\". Then, a similar process occurs to gather the width from the user and store it in the variable \"width\". Later, the program calculates the area of the rectangle by multiplying the length and width, and stores the result in the variable \"area\". Finally, the program displays the calculated area to the user."
+        "code": "```python\n# Step 1: Define variables\nname = \"John Doe\"\nage = 25\nfavorite_color = \"blue\"\n\n# Step 2: Print statements\nprint(\"My name is\", name)\nprint(\"I am\", age,\"years old\")\nprint(\"My favorite color is\", favorite_color)\n```",
+        "explanation": "- In this program, we start by defining three variables: `name`, `age`, and `favorite_color`.\n- The `name` variable is assigned the value `\"John Doe\"`, representing your name.\n- The `age` variable is assigned the value `25`, representing your age.\n- The `favorite_color` variable is assigned the value `\"blue\"`, representing your favorite color.\n- We use the `print` statements to display the values stored in each variable.\n- The first `print` statement displays a combination of the string \"My name is\" and the value of the `name` variable.\n- The second `print` statement displays a combination of the string \"I am\", the value of the `age` variable, and the string \"years old\".\n- The third `print` statement displays a combination of the string \"My favorite color is\" and the value of the `favorite_color` variable.\n\nWhen you run the program, it will output:\n```\nMy name is John Doe\nI am 25 years old\nMy favorite color is blue\n```\n\nThis simple exercise demonstrates how to define variables, assign values to them, and use print statements to display the stored values."
     }
 }

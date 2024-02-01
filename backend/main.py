@@ -9,6 +9,7 @@ import asyncio
 import json
 from random import randint
 from utilities import *
+from prompts import *
 from io import StringIO
 from contextlib import redirect_stdout
 
@@ -33,15 +34,7 @@ client = OpenAI(
     api_key=settings.openai_api_key
 )
 
-prompts = {
-    "Variables": {
-        1: "Please provide a prompt and code outline for a very basic problem to help a student who has never coded before learn python syntax and variables. This code should not contain any input statements and should rely only a print statements for displaying output.",
-        2: "Please provide a prompt and code outline for a problem to help a student who has never coded before learn python syntax and variables."
-    },
-    "Data": {},
-    "Conditionals": {},
-    "OOP": {}
-}
+prompts = getPrompts()
 
 # 
 # API used from front-end to call for ChatGPT responses to fill the various exercises provided to students
@@ -77,7 +70,7 @@ async def getOpenaiCompletion(key: int, prompt: str):
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
+            #{"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
             {"role": "user", "content": prompt}
         ]
     )

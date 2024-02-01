@@ -1,7 +1,11 @@
 <script setup>
-defineProps({
+const props = defineProps({
   exercises: {
     type: Object,
+    required: true
+  },
+  section: {
+    type: String,
     required: true
   },
   sectionDescription: {
@@ -20,18 +24,37 @@ const display = ref(1);
 const content = ref([{}, {}, {}]);
 const hasLoaded = ref(false);
 
+const hasErrored = ref(false);
+const errorMessage = ref("");
+
 // First parameter is endpoint URL, second is header object
-// TODO - error handling
-let endpoint = import.meta.env.VITE_API_URL;
-fetch(endpoint + "/test", {})
-    .then(response => response.json())
-    .then(data => {
-        const completions = data["completions"];
-        for (var key in completions) {
-          var index = Number(key)
-          content.value[index-1] = completions[key];
+let baseUrl = import.meta.env.VITE_API_URL;
+let endpoint = ""
+if (import.meta.env.VITE_USE_LIVE_DATA == 'true') {
+  endpoint = baseUrl + "?section=" + props.section + "&id=-1"
+} else {
+  endpoint = baseUrl + "/test"
+}
+fetch(endpoint, {})
+    .then(async response => {
+        const data = await response.json()
+
+        console.log("Status: " + response.status + " - " + response.statusText)
+
+        if(!response.ok) {
+          console.log("There was an error!")
+          console.log(data.detail)
+
+          errorMessage.value = "There was an error loading data from OpenAI. Please reload the page."
+          hasErrored.value = true;
+        } else {
+          const completions = data["completions"];
+          for (var key in completions) {
+            var index = Number(key)
+            content.value[index-1] = completions[key];
+          }
+          hasLoaded.value = true;
         }
-        hasLoaded.value = true;
     })
 
 function switchTab(id) {
@@ -74,10 +97,14 @@ function switchTab(id) {
               
             </div>
 
-            <div v-else class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">
+            <div v-if="hasLoaded === false && hasErrored === false" class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">
                 <VueSpinner size="40" color="red"/>
                 <div class="h-5"></div>
                 <p>Using the power of AI to generate a custom lesson plan just for you</p>
+            </div>
+
+            <div v-if="hasErrored" class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">
+                <p class="font-bold font-xl text-red-500">Using the power of AI to generate a custom lesson plan just for you</p>
             </div>
           </div>
         </div>

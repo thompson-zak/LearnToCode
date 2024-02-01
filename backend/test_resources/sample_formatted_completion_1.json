@@ -1,16 +1,13 @@
 {
     "1": {
-        "prompt": "Write a program that calculates the area of a rectangle. The user should be able to enter the length and width of the rectangle, and the program should output the calculated area.",
+        "prompt": "Write a program in Python to calculate the area of a rectangle given its length and width.",
         "outline": [
-            " Print a message asking the user for the length of the rectangle.",
-            " Assign the user's input to a variable called \"length\" using the input() function.",
-            " Print a message asking the user for the width of the rectangle.",
-            " Assign the user's input to a variable called \"width\" using the input() function.",
-            " Convert the values of the \"length\" and \"width\" variables to integers using the int() function.",
-            " Calculate the area of the rectangle by multiplying the \"length\" and \"width\" variables together. Assign the result to a variable called \"area\".",
-            " Print the calculated area of the rectangle."
+            " Define two variables to store the length and width of the rectangle.",
+            " Assign specific values to the variables.",
+            " Calculate the area of the rectangle using the formula: area = length * width.",
+            " Display the calculated area using a print statement."
         ],
-        "code": "```python\n# Prompt the user for the length of the rectangle\nlength = input(\"Enter the length of the rectangle: \")\n\n# Prompt the user for the width of the rectangle\nwidth = input(\"Enter the width of the rectangle: \")\n\n# Convert the length and width to integers\nlength = int(length)\nwidth = int(width)\n\n# Calculate the area\narea = length * width\n\n# Print the calculated area\nprint(\"The area of the rectangle is:\", area)\n```",
-        "explanation": "This code will allow the user to enter the length and width of a rectangle as input. It will then calculate the area by multiplying the length and width variables together. Finally, it will print the result."
+        "code": "```python\n# Step 1: Define variables for length and width\nlength = 5\nwidth = 3\n\n# Step 2: Assign specific values\n# Here, length = 5 and width = 3\n\n# Step 3: Calculate the area\narea = length * width\n\n# Step 4: Display the calculated area\nprint(\"The area of the rectangle is: \", area)\n```",
+        "explanation": "1. The code begins by defining two variables, `length` and `width`, to store the length and width of the rectangle, respectively.\n2. In this example, the length is assigned the value 5, and the width is assigned the value 3.\n3. The area of a rectangle can be calculated by multiplying its length and width together. This calculation is performed by assigning the result to the variable `area`.\n4. Finally, the calculated area is displayed using a print statement, with an appropriate message to provide context.\n\nNote: Since there are no input statements and the values for length and width are directly assigned in the code, the output will always be the same. However, variables can be modified to input values from the user if desired."
     }
 }
