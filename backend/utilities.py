@@ -81,14 +81,14 @@ def formatCompletions(completionsWithKeys):
 
         contentLowercase = content.lower()
         endBoldTagKeyword = "</b>"
-        hrTagKeyword = "<hr>"
+        
         
         promptStartIndex = contentLowercase.index(endBoldTagKeyword)
-        promptEndIndex = contentLowercase.index(hrTagKeyword, promptStartIndex)
+        promptEndIndex = findSectionEndIndex(contentLowercase, promptStartIndex)
         promptContent = content[ promptStartIndex + len(endBoldTagKeyword) : promptEndIndex ].strip()
 
         outlineStartIndex = contentLowercase.index(endBoldTagKeyword, promptEndIndex)
-        outlineEndIndex = contentLowercase.index(hrTagKeyword, outlineStartIndex)
+        outlineEndIndex = findSectionEndIndex(contentLowercase, outlineStartIndex)
         outlineContent = content[ outlineStartIndex + len(endBoldTagKeyword) : outlineEndIndex ].strip()
         trailingWordIndex = outlineContent.rindex(".")
         # Prepending a newline character will give all list numberings a common format
@@ -100,14 +100,13 @@ def formatCompletions(completionsWithKeys):
                 outlineSteps.remove(outlineStep)
 
         codeStartIndex = contentLowercase.index(endBoldTagKeyword, outlineEndIndex)
-        codeEndIndex = contentLowercase.index(hrTagKeyword, codeStartIndex)
+        codeEndIndex = findSectionEndIndex(contentLowercase, codeStartIndex)
         codeContent = content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ].strip()
 
         explanationStartIndex = contentLowercase.index(endBoldTagKeyword, codeEndIndex)
-        try:
-            explanationEndIndex = contentLowercase.index(hrTagKeyword, explanationStartIndex)
-        except ValueError as e:
-            # This means the <hr> tag was not found from the beginning of the last block to end of text. Therefore, take end of string as final index.
+        explanationEndIndex = findSectionEndIndex(contentLowercase, explanationStartIndex)
+        # If end index is -1, then <hr> and <b> tag was not found from the beginning of the last block to end of text. Therefore, take end of string as final index.
+        if explanationEndIndex == -1:
             explanationEndIndex = len(contentLowercase)
         explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ].strip()
 
@@ -123,3 +122,19 @@ def formatCompletions(completionsWithKeys):
     print("--------------------------------------------")
 
     return formattedCompletions
+
+def findSectionEndIndex(contentLowercase : str, startIndex : int):
+    hrTagKeyword = "<hr>"
+    boldTagKeyword = "<b>"
+
+    try:
+        hrEndIndex = contentLowercase.index(hrTagKeyword, startIndex)
+        return hrEndIndex
+    except:
+        print("Could not find hr html tag while searching section with start index of " + str(startIndex))
+        try:
+            boldEndIndex = contentLowercase.index(boldTagKeyword, startIndex)
+            return boldEndIndex
+        except:
+            print("Could not find b html tag while searching section with start index of " + str(startIndex))
+            return -1

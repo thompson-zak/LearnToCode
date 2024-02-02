@@ -3,7 +3,7 @@ from fastapi import FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel
-from openai import OpenAI
+from openai import AsyncOpenAI
 import time
 import asyncio
 import json
@@ -30,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = OpenAI(
+client = AsyncOpenAI(
     api_key=settings.openai_api_key
 )
 
@@ -67,7 +67,7 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
     }
 
 async def getOpenaiCompletion(key: int, prompt: str):
-    completion = client.chat.completions.create(
+    completion = await client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             #{"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
