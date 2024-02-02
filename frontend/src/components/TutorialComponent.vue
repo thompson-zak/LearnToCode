@@ -17,6 +17,7 @@ const props = defineProps({
 import TutorialTab from './../components/TutorialTab.vue'
 import TutorialContent from './../components/TutorialContent.vue'
 import TutorialFooter from './../components/TutorialFooter.vue'
+import TutorialLoadingSlideshow from './TutorialLoadingSlideshow.vue';
 import { ref } from 'vue';
 import { VueSpinner } from 'vue3-spinners';
 
@@ -100,7 +101,7 @@ function switchTab(id) {
             <div v-if="hasLoaded === false && hasErrored === false" class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">
                 <VueSpinner size="40" color="red"/>
                 <div class="h-5"></div>
-                <p>Using the power of AI to generate a custom lesson plan just for you</p>
+                <TutorialLoadingSlideshow />
             </div>
 
             <div v-if="hasErrored" class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">

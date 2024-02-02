@@ -57,7 +57,9 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
 
     requestedPrompts = validateAndParsePrompts(section, id, auth_header, prompts, settings)
 
-    completionsWithKeys = await asyncio.gather(*[getOpenaiCompletion(prompt[0], prompt[1]) for prompt in requestedPrompts])
+    completions = await asyncio.gather(*[getOpenaiCompletion(prompt[1]) for prompt in requestedPrompts])
+
+    completionsWithKeys = [{"key": index+1, "completion": completions[index]} for index in range(0, len(completions))]
 
     formattedCompletions = formatCompletions(completionsWithKeys)
     
@@ -66,19 +68,14 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
         "executionTime": round(time.time() - startTime, 2) 
     }
 
-async def getOpenaiCompletion(key: int, prompt: str):
-    completion = await client.chat.completions.create(
+async def getOpenaiCompletion(prompt: str):
+    return await client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             #{"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
             {"role": "user", "content": prompt}
         ]
     )
-
-    return { 
-        "key": key,
-        "completion": completion
-    }
 
 
 @app.post("/execute/code")
