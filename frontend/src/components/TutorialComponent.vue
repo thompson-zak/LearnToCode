@@ -76,7 +76,7 @@ function switchTab(id) {
             <div class="bg-transparent mr-5">
   
               <h1 class="font-bold text-2xl">
-                Variables
+                {{ section }}
               </h1>
   
               <div v-for="exercise in exercises" :key="exercise.id">
