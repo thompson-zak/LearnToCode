@@ -15,6 +15,7 @@ const props = defineProps({
 })
 
 import { ref } from 'vue'
+import { VueSpinnerGears } from 'vue3-spinners';
 
 // *** Code Mirror Dependencies *** //
 import Codemirror from "codemirror-editor-vue3";
@@ -36,6 +37,7 @@ print(message)`
 );
 const exampleCode = ref(props.content["code"])
 const outputResult = ref("")
+const isCodeExecuting = ref(false)
 
 const cmOptions = {
         mode: "text/x-python", // Language mode
@@ -63,7 +65,8 @@ function incrementStep() {
 
 function executeCode() {
   // First, remove previous output so there's no confusion
-  outputResult.value = ""
+  outputResult.value = "";
+  isCodeExecuting.value = true;
 
   // First parameter is endpoint URL, second is header object
   // TODO - error handling
@@ -76,9 +79,10 @@ function executeCode() {
   fetch(endpoint + "/execute/code", requestOptions)
       .then(response => response.json())
       .then(data => {
-          console.log(data)
+          console.log(data);
           const output = data["output"];
           outputResult.value = output;
+          isCodeExecuting.value = false;
       })
 }
 </script>
@@ -131,10 +135,16 @@ function executeCode() {
       </div>
 
       <h2 class="mt-3">Output:</h2>
-      <div class="h-[10vh]">
+      <div class="relative h-[10vh]">
         <Codemirror
           v-model:value="outputResult"
           :options="cmReadOnlyOptions"
+        />
+        <VueSpinnerGears 
+          v-if="isCodeExecuting === true"
+          size="25" 
+          color="orange"
+          class="absolute bottom-2 right-2 z-10" 
         />
       </div>
 

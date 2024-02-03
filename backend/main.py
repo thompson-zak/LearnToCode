@@ -112,6 +112,9 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
     code = jsonRequest["code"]
     validateCode(code, auth_header, settings)
 
+    # For testing loading behavior - remove this once done
+    time.sleep(5)
+
     queue = mp.Queue()
     p = mp.Process(target=worker, args=(code, queue))
     p.start()
