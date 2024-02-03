@@ -7,6 +7,7 @@ from openai import AsyncOpenAI
 import time
 import asyncio
 import json
+import multiprocessing as mp
 from random import randint
 from utilities import *
 from prompts import *
@@ -80,29 +81,43 @@ async def getOpenaiCompletion(prompt: str):
 
 @app.post("/execute/code")
 async def executeCode(request: Request, auth_header: Annotated[str | None, Header()] = None):
-    validateCode(code, auth_header)
     jsonRequest = await request.json()
     code = jsonRequest["code"]
+    validateCode(code, auth_header, settings)
 
+    retObject = { "output": "Default value!" }
+    q = mp.Queue()
+    q.put(retObject)
+
+    proc = mp.Process(target=execCode, args=(code, retObject))
+    proc.start()
+    proc.join()
+
+    return q.get()
+
+
+def execCode(code: str, retObject: object):
     error = None
     f = StringIO()
     with redirect_stdout(f):
         try:
-            # TODO - disallow builtins
-            # TODO - spawn this off as a new process so that any segfault will not kill fastapi runner
-            exec(code) in {'__builtins__': {}}, {}
+            # set globals parameter to none
+            globalsParameter = {'__builtins__' : None}
+            # set locals parameter to take only print()
+            localsParameter = {'print': print}
+            exec(code, globalsParameter, localsParameter)
+            return 0
         except Exception as e:
             error = e
 
     if error is not None:
         print(error)
-        raise HTTPException(status_code=400, detail=str(error))
-    
-    s = f.getvalue()
+        output = "[ERROR] Server could not execute your code."
+    else:
+        output = f.getvalue()
 
-    return { 
-        "output": s 
-    }
+    retObject["output"] = output
+    return retObject
     
 
 @app.post("/execute/code/test")

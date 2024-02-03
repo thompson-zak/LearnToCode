@@ -8,7 +8,7 @@ def validateAuthHeader(auth_header: str, settings: BaseSettings):
         raise HTTPException(status_code=400, detail="You are not authorized to call this endpoint.")
 
 
-def validateCode(codeRequest: object, auth_header: str, settings: BaseSettings):
+def validateCode(code: str, auth_header: str, settings: BaseSettings):
     validateAuthHeader(auth_header, settings)
     # TODO - validate code (ensure no malicious functions, ensure it can be 'compiled')
 
@@ -42,12 +42,6 @@ def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  p
 def formatCompletions(completionsWithKeys):
     formattedCompletions = {}
     for completionWithKey in completionsWithKeys:
-        # Key sections to parse - may need to add flexibility if ChatGPT ever starts to switch up ordering of sections
-        promptKeyword = "Prompt:".lower()
-        outlineKeyword = "Steps to Complete:".lower()
-        codeKeyword = "Code Sample:".lower()
-        explanationKeyword = "Explanation:".lower()
-        codeCommentKeyword = "```".lower()
 
         completion = completionWithKey["completion"]
         if not isinstance(completion, dict):
@@ -81,7 +75,6 @@ def formatCompletions(completionsWithKeys):
 
         contentLowercase = content.lower()
         endBoldTagKeyword = "</b>"
-        
         
         promptStartIndex = contentLowercase.index(endBoldTagKeyword)
         promptEndIndex = findSectionEndIndex(contentLowercase, promptStartIndex)

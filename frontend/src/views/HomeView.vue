@@ -15,9 +15,7 @@ import { RouterLink } from 'vue-router';
             target="_blank"
             rel="noopener noreferrer"
           >
-            <a>
-              <img src="../assets/cuban-logo.png" class="h-6"/>
-            </a>
+            <img src="../assets/cuban-logo.png" class="h-6"/>
           </a>
         </div>
       </div>
@@ -40,8 +38,8 @@ import { RouterLink } from 'vue-router';
           </p>
         </RouterLink>
 
-        <a
-          href="/tutorials/data"
+        <RouterLink
+          to="/tutorials/data"
           class="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
         <span class="mb-3 text-2xl font-semibold inline-block">
@@ -51,10 +49,10 @@ import { RouterLink } from 'vue-router';
           <p class="m-0 max-w-[30ch] text-sm opacity-50">
             Explore the many different types of data and the near unlimited ways you can store it.
           </p>
-        </a>
+        </RouterLink>
 
-        <a
-          href="/tutorials/conditionals"
+        <RouterLink
+          to="/tutorials/conditionals"
           class="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
         <span class="mb-3 text-2xl font-semibold inline-block">
@@ -64,10 +62,10 @@ import { RouterLink } from 'vue-router';
           <p class="m-0 max-w-[30ch] text-sm opacity-50">
             Try out ifs, fors, whiles and many more to perform a multitude of actions.
           </p>
-        </a>
+        </RouterLink>
 
-        <a
-          href="/tutorials/oop"
+        <RouterLink
+          to="/tutorials/oop"
           class="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
         <span class="mb-3 text-2xl font-semibold inline-block">
@@ -77,7 +75,7 @@ import { RouterLink } from 'vue-router';
           <p class="m-0 max-w-[30ch] text-sm opacity-50">
             Dip your toe into object oriented programming, the core of software engineering.
           </p>
-        </a>
+        </RouterLink>
       </div>
     </main>
 </template>

@@ -76,6 +76,7 @@ function executeCode() {
   fetch(endpoint + "/execute/code", requestOptions)
       .then(response => response.json())
       .then(data => {
+          console.log(data)
           const output = data["output"];
           outputResult.value = output;
       })
