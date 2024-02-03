@@ -8,6 +8,7 @@ import time
 import asyncio
 import json
 import multiprocessing as mp
+import sys
 from random import randint
 from utilities import *
 from prompts import *
@@ -20,6 +21,32 @@ class Settings(BaseSettings):
     api_auth_enabled: bool
 
     model_config = SettingsConfigDict(env_file=".env")
+
+class CaptureOutput:
+    def __enter__(self):
+        self._stdout_output = ''
+        self._stderr_output = ''
+
+        self._stdout = sys.stdout
+        sys.stdout = StringIO()
+
+        self._stderr = sys.stderr
+        sys.stderr = StringIO()
+
+        return self
+
+    def __exit__(self, *args):
+        self._stdout_output = sys.stdout.getvalue()
+        sys.stdout = self._stdout
+
+        self._stderr_output = sys.stderr.getvalue()
+        sys.stderr = self._stderr
+
+    def get_stdout(self):
+        return self._stdout_output
+
+    def get_stderr(self):
+        return self._stderr_output
 
 settings = Settings()
 app = FastAPI()
@@ -85,39 +112,42 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
     code = jsonRequest["code"]
     validateCode(code, auth_header, settings)
 
-    retObject = { "output": "Default value!" }
-    q = mp.Queue()
-    q.put(retObject)
+    queue = mp.Queue()
+    p = mp.Process(target=worker, args=(code, queue))
+    p.start()
+    # Must do this call before call to join:
+    result, stdout_output, stderr_output = queue.get()
+    p.join()
 
-    proc = mp.Process(target=execCode, args=(code, retObject))
-    proc.start()
-    proc.join()
+    print("result: " + str(result))
+    print("stdout: " + str(stdout_output))
+    print("stderr: " + str(stderr_output))
 
-    return q.get()
+    return {
+        "output": str(stdout_output),
+        "error": str(stderr_output)
+    } 
 
 
-def execCode(code: str, retObject: object):
-    error = None
-    f = StringIO()
-    with redirect_stdout(f):
+def worker(code, queue):
+    import traceback
+
+    with CaptureOutput() as capturer:
         try:
-            # set globals parameter to none
-            globalsParameter = {'__builtins__' : None}
-            # set locals parameter to take only print()
-            localsParameter = {'print': print}
-            exec(code, globalsParameter, localsParameter)
-            return 0
+            result = runCode(code)
         except Exception as e:
-            error = e
+            result = e
+            print(traceback.format_exc(), file=sys.stderr)
+    queue.put((result, capturer.get_stdout(), capturer.get_stderr()))
 
-    if error is not None:
-        print(error)
-        output = "[ERROR] Server could not execute your code."
-    else:
-        output = f.getvalue()
 
-    retObject["output"] = output
-    return retObject
+def runCode(code : str):
+    # set globals parameter to none
+    globalsParameter = {'__builtins__' : None}
+    # set locals parameter to take only print()
+    localsParameter = {'print': print}
+    # successful execution will result in None returned
+    return exec(code, globalsParameter, localsParameter)
     
 
 @app.post("/execute/code/test")
