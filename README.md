@@ -12,6 +12,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Implement validation to screen for improper code and deliver message to user~~ 
 * Reformat tutorial page home and logo buttons for smaller screens (possibly into nav column)  
 * Implement persistent state so that OpenAI is called only once and any code written is kept on reload   
+* Possibly add page for brief introduction to concepts and have a link/button to show reference page  
   
 ## frontend 
 npm install   
