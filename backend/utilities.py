@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings
 from fastapi import HTTPException
 import json
 import re
+import traceback
 
 def validateAuthHeader(auth_header: str, settings: BaseSettings):
     if(settings.api_auth_enabled and auth_header != settings.frontend_api_auth):
@@ -10,7 +11,30 @@ def validateAuthHeader(auth_header: str, settings: BaseSettings):
 
 def validateCode(code: str, auth_header: str, settings: BaseSettings):
     validateAuthHeader(auth_header, settings)
-    # TODO - validate code (ensure no malicious functions, ensure it can be 'compiled')
+    
+    print("I am currently validating user provided code.")
+
+    try:
+        codeObject = compile(code, "User supplied code", "exec")
+    except Exception as e:
+        eType = type(e).__name__
+        userErrorString = ""
+        if eType == 'SyntaxError':
+            traceStrList = traceback.format_exception(e)
+            strLen = len(traceStrList)
+            if strLen >= 3:
+                userErrorString = traceStrList[strLen-3] + traceStrList[strLen-2] + traceStrList[strLen-1]
+
+        errorObject = {
+            "errorType": eType,
+            "errorMessage": userErrorString
+        }
+
+        print("I have caught an error during compilation!")
+
+        raise HTTPException(status_code=400, detail=errorObject)
+
+    return None
 
 
 def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  prompts: any, settings: BaseSettings):

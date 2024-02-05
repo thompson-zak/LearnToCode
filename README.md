@@ -9,7 +9,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * Create prompts for 'oop' section  
 * ~~Add loading behavior to indicate that code is currently in execution~~  
 * Add timeout to code to prevent hanging requests  
-* Implement validation to screen for improper code and deliver message to user 
+* ~~Implement validation to screen for improper code and deliver message to user~~ 
 * Reformat tutorial page home and logo buttons for smaller screens (possibly into nav column)  
 * Implement persistent state so that OpenAI is called only once and any code written is kept on reload   
   

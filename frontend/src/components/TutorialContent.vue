@@ -77,12 +77,22 @@ function executeCode() {
   }
   console.log(requestOptions)
   fetch(endpoint + "/execute/code", requestOptions)
-      .then(response => response.json())
-      .then(data => {
-          console.log(data);
-          const output = data["output"];
-          outputResult.value = output;
-          isCodeExecuting.value = false;
+      .then(async response => {
+          const data = await response.json()
+
+          console.log(data)
+
+          if(response.ok) {
+            const output = data["output"];
+            outputResult.value = output;
+            isCodeExecuting.value = false;
+          } else {
+            const errorType = data["detail"]["errorType"];
+            const errorMessage = data["detail"]["errorMessage"];
+            const errorFormatted = errorType + "\n\n" + errorMessage;
+            outputResult.value = errorFormatted;
+            isCodeExecuting.value = false;
+          }
       })
 }
 </script>

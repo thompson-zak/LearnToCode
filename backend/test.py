@@ -1,5 +1,7 @@
 from main import formatCompletions
 import json
+import traceback
+import sys
 
 
 # Sample Completion 1 updated to better reflect new OpenAI response with nested objects rather than JSON
@@ -15,6 +17,7 @@ def testformatCompletions1():
     print("----------------------------------")
     return formattedCompletions
 
+
 # Sample Completion 2 updated to better reflect new OpenAI response with nested objects rather than JSON
 def testformatCompletions2():
     file = open('./test_resources/sample_completion_2.json')
@@ -29,6 +32,12 @@ def testformatCompletions2():
     return formattedCompletions
 
 
+def testCompileBehavior():
+    codeBlock = "This is not python code!"
+    codeObject = compile(codeBlock, "userCode", "exec")
+            
+
 if __name__ == "__main__":
-    testformatCompletions1()
-    testformatCompletions2()
+    #testformatCompletions1()
+    #testformatCompletions2()
+    testCompileBehavior()
