@@ -28,38 +28,78 @@ const hasLoaded = ref(false);
 const hasErrored = ref(false);
 const errorMessage = ref("");
 
-// First parameter is endpoint URL, second is header object
-let baseUrl = import.meta.env.VITE_API_URL;
-let endpoint = ""
-if (import.meta.env.VITE_USE_LIVE_DATA == 'true') {
-  endpoint = baseUrl + "?section=" + props.section + "&id=-1"
-} else {
-  endpoint = baseUrl + "/test"
-}
-fetch(endpoint, {})
-    .then(async response => {
-        const data = await response.json()
+getComponentData();
 
-        console.log("Status: " + response.status + " - " + response.statusText)
-
-        if(!response.ok) {
-          console.log("There was an error!")
-          console.log(data.detail)
-
-          errorMessage.value = "There was an error loading data from OpenAI. Please reload the page."
-          hasErrored.value = true;
-        } else {
-          const completions = data["completions"];
-          for (var key in completions) {
-            var index = Number(key)
-            content.value[index-1] = completions[key];
-          }
-          hasLoaded.value = true;
-        }
+function getComponentData() {
+  const storedData = getLocalStorage();
+  console.log("Checking if there is stored data.");
+  if(storedData != null) {
+    console.log("Parsing and displaying saved data.");
+    populateContent(JSON.parse(storedData));
+    hasLoaded.value = true;
+  } else {
+    console.log("Calling Open AI api.")
+    getOpenAiData().then(completions => {
+      if(completions != null) {
+        console.log("Saving to local storage.");
+        setLocalStorage(completions);
+      }
     })
+  }
+}
+
+function getOpenAiData() {
+  // First parameter is endpoint URL, second is header object
+  let baseUrl = import.meta.env.VITE_API_URL;
+  let endpoint = ""
+  if (import.meta.env.VITE_USE_LIVE_DATA == 'true') {
+    endpoint = baseUrl + "?section=" + props.section + "&id=-1"
+  } else {
+    endpoint = baseUrl + "/test"
+  }
+  return fetch(endpoint, {})
+      .then(async response => {
+          const data = await response.json()
+
+          console.log("Status: " + response.status + " - " + response.statusText)
+
+          if(!response.ok) {
+            console.log("There was an error!")
+            console.log(data.detail)
+
+            errorMessage.value = "There was an error loading data from OpenAI. Please reload the page."
+            hasErrored.value = true;
+            return null;
+          } else {
+            const completions = data["completions"];
+            populateContent(completions);
+            hasLoaded.value = true;
+            return completions;
+          }
+      })
+}
+
+function populateContent(completions) {
+  for (var key in completions) {
+    var index = Number(key)
+    content.value[index-1] = completions[key];
+  }
+}
 
 function switchTab(id) {
   display.value = id;
+}
+
+function getLocalStorage() {
+  return localStorage.getItem(props.section)
+}
+
+function setLocalStorage(item) {
+  localStorage.setItem(props.section, JSON.stringify(item))
+}
+
+function clearLocalStorage() {
+  localStorage.removeItem(props.section)
 }
 </script>
 
@@ -81,6 +121,10 @@ function switchTab(id) {
   
               <div v-for="exercise in exercises" :key="exercise.id">
                 <TutorialTab :tabTitle=exercise.title @click="switchTab(exercise.id)" />
+              </div>
+
+              <div class="mt-5">
+                <button @click="clearLocalStorage">Clear Exercises</button>
               </div>
   
             </div>
