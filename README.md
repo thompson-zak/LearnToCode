@@ -12,7 +12,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
     * ~~User facing timeout~~
     * Actual thread termination past timeout limit
 * ~~Implement validation to screen for improper code and deliver message to user~~ 
-* Reformat tutorial page home and logo buttons for smaller screens (possibly into nav column) 
+* ~~Reformat tutorial page home and logo buttons for smaller screens (possibly into nav column)~~ 
     * Add and format button to clear exercises and reload open ai data (partially completed)
 * Implement persistent state  
     * ~~Save OpenAI requests~~  

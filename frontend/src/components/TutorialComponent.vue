@@ -89,10 +89,6 @@ function getLocalStorage() {
 function setLocalStorage(item) {
   localStorage.setItem(props.section, JSON.stringify(item))
 }
-
-function clearLocalStorage() {
-  localStorage.removeItem(props.section)
-}
 </script>
 
 <template>
@@ -105,19 +101,30 @@ function clearLocalStorage() {
             The right, larger column will house the code editor.
           -->
           <div class="grid grid-cols-5 w-full">
-            <div class="bg-transparent mr-5">
+            <div class="bg-transparent mr-5 flex flex-1 flex-col justify-between">
   
-              <h1 class="font-bold text-2xl">
-                {{ section }}
-              </h1>
-  
-              <div v-for="exercise in exercises" :key="exercise.id">
-                <TutorialTab :tabTitle=exercise.title @click="switchTab(exercise.id)" />
+              <div>
+                <h1 class="font-bold text-2xl">
+                  {{ section }}
+                </h1>
+    
+                <div v-for="exercise in exercises" :key="exercise.id">
+                  <TutorialTab :tabTitle=exercise.title @click="switchTab(exercise.id)" />
+                </div>
               </div>
 
-              <div class="mt-5">
-                <button @click="clearLocalStorage">Clear Exercises</button>
-              </div>
+              <RouterLink
+                to="/"
+                class="align-bottom group rounded-lg border border-transparent px-4 py-3 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+              >
+                <h2 class="mb-2 text-2xl font-semibold">
+                  <IconSvg name="arrow-left-long" size="25px" class="inline-block"></IconSvg>
+                  Home
+                </h2>
+                <p class="m-0 max-w-[30ch] text-sm opacity-50 inline-block">
+                  Go back to start another lesson.
+                </p>
+              </RouterLink>
   
             </div>
             <div v-if="hasLoaded" class="col-span-4">
