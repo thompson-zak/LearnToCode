@@ -133,6 +133,7 @@ function clearLocalStorage() {
               <div v-for="exercise in exercises" :key="exercise.id">
                 <KeepAlive>
                   <TutorialContent v-if="display == exercise.id"
+                    :section=section
                     :title=exercise.title
                     :description=sectionDescription
                     :content=content[exercise.listIndex]

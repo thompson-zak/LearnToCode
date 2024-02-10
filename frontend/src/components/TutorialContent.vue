@@ -1,5 +1,9 @@
 <script setup>
 const props = defineProps({
+  section: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
@@ -31,10 +35,12 @@ import "codemirror/theme/dracula.css";
 
 const currentOutlineStep = ref(0)
 const showModal = ref(false)
-const code = ref(
+
+const code = ref("");
+const codePlaceholder = 
 `message = "Hello World!"
-print(message)`
-);
+print(message)`;
+
 const exampleCode = ref(props.content["code"])
 const outputResult = ref("")
 const isCodeExecuting = ref(false)
@@ -50,6 +56,8 @@ const cmReadOnlyOptions = {
   readOnly: true, // Read Only
   autoRefresh: true, // Allow for autorefresh
 }
+
+loadCode();
 
 function decrementStep() {
   if (currentOutlineStep.value > 0) {
@@ -94,6 +102,22 @@ function executeCode() {
             isCodeExecuting.value = false;
           }
       })
+}
+
+function saveCode() {
+  const key = props.section + "Code" + props.title.slice(-1);
+  localStorage.setItem(key, code.value)
+}
+
+function loadCode() {
+  const key = props.section + "Code" + props.title.slice(-1);
+  const savedCode = localStorage.getItem(key)
+  console.log(savedCode);
+  if(savedCode != null) {
+    code.value = savedCode;
+  } else {
+    code.value = codePlaceholder;
+  }
 }
 </script>
 
@@ -140,7 +164,8 @@ function executeCode() {
           <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1" name="lightbulb" size="30px" color="yellow"/>
         </div>
         <div class="absolute bottom-0 right-0 z-10">
-          <button class="bg-green-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="executeCode">Run Code</button>
+          <button class="bg-blue-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="saveCode">Save</button>
+          <button class="bg-green-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="executeCode">Execute</button>
         </div>
       </div>
 
