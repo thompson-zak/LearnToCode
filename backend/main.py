@@ -117,7 +117,10 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
     p.start()
     # Must do this call before call to join:
     result, stdout_output, stderr_output = queue.get()
-    p.join()
+    
+    # This will result in the join timing out, but it won't necessary kill the
+    # thread which is actually running the code
+    p.join(5.0)
 
     print("result: " + str(result))
     print("stdout: " + str(stdout_output))

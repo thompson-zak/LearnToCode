@@ -32,16 +32,13 @@ getComponentData();
 
 function getComponentData() {
   const storedData = getLocalStorage();
-  console.log("Checking if there is stored data.");
+
   if(storedData != null) {
-    console.log("Parsing and displaying saved data.");
     populateContent(JSON.parse(storedData));
     hasLoaded.value = true;
   } else {
-    console.log("Calling Open AI api.")
     getOpenAiData().then(completions => {
       if(completions != null) {
-        console.log("Saving to local storage.");
         setLocalStorage(completions);
       }
     })
@@ -61,12 +58,7 @@ function getOpenAiData() {
       .then(async response => {
           const data = await response.json()
 
-          console.log("Status: " + response.status + " - " + response.statusText)
-
           if(!response.ok) {
-            console.log("There was an error!")
-            console.log(data.detail)
-
             errorMessage.value = "There was an error loading data from OpenAI. Please reload the page."
             hasErrored.value = true;
             return null;
