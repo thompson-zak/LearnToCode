@@ -169,10 +169,10 @@ async def test(requestTriple: bool = True):
 
     if requestTriple:
         # Loads the pre-fetched and pre-formatted chat completion containing all 3 sample exercises
-        filePath = "./test_resources/sample_multiple_formatted_completion.json"
+        filePath = "./test_resources/variables/sample_multiple_formatted_completion.json"
     else:
         # Loads one of two pre-fetched and pre-formatted chat completion responses
-        filePath = "./test_resources/sample_formatted_completion_" + str(randint(1,2)) + ".json"
+        filePath = "./test_resources/variables/sample_formatted_completion_" + str(randint(1,2)) + ".json"
 
     file = open(filePath)
     formattedResponse = json.load(file)

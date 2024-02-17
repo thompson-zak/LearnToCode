@@ -3,6 +3,8 @@ from fastapi import HTTPException
 import json
 import re
 import traceback
+from io import StringIO
+from html.parser import HTMLParser
 
 def validateAuthHeader(auth_header: str, settings: BaseSettings):
     if(settings.api_auth_enabled and auth_header != settings.frontend_api_auth):
@@ -63,6 +65,19 @@ def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str,  p
     return requestedPrompts
 
 
+class MLStripper(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.reset()
+        self.strict = False
+        self.convert_charrefs= True
+        self.text = StringIO()
+    def handle_data(self, d):
+        self.text.write(d)
+    def get_data(self):
+        return self.text.getvalue()
+
+
 def formatCompletions(completionsWithKeys):
     formattedCompletions = {}
     for completionWithKey in completionsWithKeys:
@@ -102,11 +117,11 @@ def formatCompletions(completionsWithKeys):
         
         promptStartIndex = contentLowercase.index(endBoldTagKeyword)
         promptEndIndex = findSectionEndIndex(contentLowercase, promptStartIndex)
-        promptContent = content[ promptStartIndex + len(endBoldTagKeyword) : promptEndIndex ].strip()
+        promptContent = stripTags(content[ promptStartIndex + len(endBoldTagKeyword) : promptEndIndex ]).strip()
 
         outlineStartIndex = contentLowercase.index(endBoldTagKeyword, promptEndIndex)
         outlineEndIndex = findSectionEndIndex(contentLowercase, outlineStartIndex)
-        outlineContent = content[ outlineStartIndex + len(endBoldTagKeyword) : outlineEndIndex ].strip()
+        outlineContent = stripTags(content[ outlineStartIndex + len(endBoldTagKeyword) : outlineEndIndex ]).strip()
         trailingWordIndex = outlineContent.rindex(".")
         # Prepending a newline character will give all list numberings a common format
         outlineContent = "\n" + outlineContent[0 : trailingWordIndex + 1]
@@ -118,14 +133,16 @@ def formatCompletions(completionsWithKeys):
 
         codeStartIndex = contentLowercase.index(endBoldTagKeyword, outlineEndIndex)
         codeEndIndex = findSectionEndIndex(contentLowercase, codeStartIndex)
-        codeContent = content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ].strip()
+        codeContent = stripTags(content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ]).strip()
 
         explanationStartIndex = contentLowercase.index(endBoldTagKeyword, codeEndIndex)
         explanationEndIndex = findSectionEndIndex(contentLowercase, explanationStartIndex)
         # If end index is -1, then <hr> and <b> tag was not found from the beginning of the last block to end of text. Therefore, take end of string as final index.
         if explanationEndIndex == -1:
-            explanationEndIndex = len(contentLowercase)
-        explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ].strip()
+            explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : ]
+        else:
+            explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ]
+        explanationContent = stripTags(explanationContent).strip()
 
         formattedCompletions[completionWithKey["key"]] = {
             "prompt": promptContent,
@@ -140,18 +157,20 @@ def formatCompletions(completionsWithKeys):
 
     return formattedCompletions
 
+
 def findSectionEndIndex(contentLowercase : str, startIndex : int):
     hrTagKeyword = "<hr>"
     boldTagKeyword = "<b>"
 
     try:
-        hrEndIndex = contentLowercase.index(hrTagKeyword, startIndex)
-        return hrEndIndex
+        boldEndIndex = contentLowercase.index(boldTagKeyword, startIndex)
+        return boldEndIndex
     except:
-        print("Could not find hr html tag while searching section with start index of " + str(startIndex))
-        try:
-            boldEndIndex = contentLowercase.index(boldTagKeyword, startIndex)
-            return boldEndIndex
-        except:
-            print("Could not find b html tag while searching section with start index of " + str(startIndex))
-            return -1
+        print("Could not find b html tag while searching section with start index of " + str(startIndex))
+        return -1
+    
+
+def stripTags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
