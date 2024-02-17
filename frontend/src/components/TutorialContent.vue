@@ -155,12 +155,13 @@ function loadCode() {
       <hr/>
 
       <h2 class="mt-3">Code:</h2>
-      <div class="relative h-[40vh]">
+      <div class="relative h-[45vh]">
         <Codemirror
           v-model:value="code"
           :options="cmOptions"
         />
         <div class="absolute top-0 right-0 z-10" title="Send Help!" @click="showModal = true">
+          <!-- Add reference sheet modal button here -->
           <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1" name="lightbulb" size="30px" color="yellow"/>
         </div>
         <div class="absolute bottom-0 right-0 z-10">
@@ -170,7 +171,7 @@ function loadCode() {
       </div>
 
       <h2 class="mt-3">Output:</h2>
-      <div class="relative h-[10vh]">
+      <div class="relative h-[15vh]">
         <Codemirror
           v-model:value="outputResult"
           :options="cmReadOnlyOptions"
@@ -182,6 +183,8 @@ function loadCode() {
           class="absolute bottom-2 right-2 z-10" 
         />
       </div>
+
+      <!-- Add reference sheet modal here -->
 
       <vue-final-modal
         v-bind="$attrs"

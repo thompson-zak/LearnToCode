@@ -32,13 +32,14 @@ getComponentData();
 
 function getComponentData() {
   const storedData = getLocalStorage();
+  const cacheData = import.meta.env.VITE_CACHE_DATA;
 
   if(storedData != null) {
     populateContent(JSON.parse(storedData));
     hasLoaded.value = true;
   } else {
     getOpenAiData().then(completions => {
-      if(completions != null) {
+      if(completions != null && cacheData == 'true') {
         setLocalStorage(completions);
       }
     })
@@ -92,7 +93,7 @@ function setLocalStorage(item) {
 </script>
 
 <template>
-    <main class="flex min-h-screen flex-col items-center justify-between p-24">
+    <main class="flex min-h-screen flex-col items-center justify-between px-24 pb-12 pt-20">
       <div class="z-10 max-w-6xl w-full items-center justify-between font-mono text-sm lg:flex">
         <div class="w-full">
           <!--
