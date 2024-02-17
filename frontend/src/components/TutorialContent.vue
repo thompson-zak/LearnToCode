@@ -77,7 +77,6 @@ function executeCode() {
   isCodeExecuting.value = true;
 
   // First parameter is endpoint URL, second is header object
-  // TODO - error handling
   let endpoint = import.meta.env.VITE_API_URL;
   let requestOptions = { 
     method: "POST",
@@ -141,12 +140,12 @@ function loadCode() {
             <span>{{ content["outline"][currentOutlineStep] }}</span>
           </span>
 
-          <span class="col-span-2 text-center">
-            <span class="ml-2 cursor-pointer" @click="decrementStep">
+          <span class="col-span-2 text-right">
+            <span class="ml-2 p-2 rounded-lg cursor-pointer transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="decrementStep">
               <IconSvg name="angles-left" size="15px" class="inline"/>Prev
             </span>
             |
-            <span class="cursor-pointer" @click="incrementStep">
+            <span class="p-2 rounded-lg cursor-pointer transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="incrementStep">
               Next<IconSvg name="angles-right" size="15px" class="inline"/>
             </span>
           </span>
