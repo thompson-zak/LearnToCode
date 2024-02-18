@@ -111,7 +111,6 @@ function saveCode() {
 function loadCode() {
   const key = props.section + "Code" + props.title.slice(-1);
   const savedCode = localStorage.getItem(key)
-  console.log(savedCode);
   if(savedCode != null) {
     code.value = savedCode;
   } else {
