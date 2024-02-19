@@ -145,9 +145,14 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
     print("stdout: " + str(stdout_output))
     print("stderr: " + str(stderr_output))
 
+    # Need to update this to only include relevant error info, not execution engine stack trace
+    strippedError = str(stderr_output).strip()
+    firstNewline = strippedError.rindex('\n')
+    trimmedError = strippedError[firstNewline + 1 : ]
+
     return {
         "output": str(stdout_output),
-        "error": str(stderr_output)
+        "error": trimmedError
     } 
 
 
@@ -184,7 +189,7 @@ async def executeCodeTest():
 async def test(requestTriple: bool = True):
     # Simulates loading times for OpenAI requests
     startTime = time.time()
-    time.sleep(8)
+    time.sleep(1)
 
     if requestTriple:
         # Loads the pre-fetched and pre-formatted chat completion containing all 3 sample exercises

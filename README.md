@@ -25,6 +25,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Add login page which will be thrown up before each router action if user is not authenticated~~  
 * ~~Set up basic mongo instance to store session data/tokens~~  
 * Change passwords from hardcoded to queried from DB  
+* Add token auth to every call  
   
 ## frontend 
 npm install   

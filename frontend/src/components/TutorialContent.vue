@@ -20,6 +20,8 @@ const props = defineProps({
 
 import { ref } from 'vue'
 import { VueSpinnerGears } from 'vue3-spinners';
+import TutorialReferenceSheet from './reference/TutorialReferenceSheet.vue';
+import { useLoginStore } from '@/stores/LoginStore';
 
 // *** Code Mirror Dependencies *** //
 import Codemirror from "codemirror-editor-vue3";
@@ -33,8 +35,11 @@ import "codemirror/addon/display/autorefresh.js";
 import "codemirror/theme/dracula.css";
 // ******************************* //
 
+const loginStore = useLoginStore();
+
 const currentOutlineStep = ref(0)
-const showModal = ref(false)
+const showHintModal = ref(false)
+const showReferenceModal = ref(true)
 
 const code = ref("");
 const codePlaceholder = 
@@ -46,9 +51,9 @@ const outputResult = ref("")
 const isCodeExecuting = ref(false)
 
 const cmOptions = {
-        mode: "text/x-python", // Language mode
-        theme: "dracula", // Theme
-      }
+  mode: "text/x-python", // Language mode
+  theme: "dracula", // Theme
+}
 
 const cmReadOnlyOptions = {
   mode: "text/x-python", // Language mode
@@ -80,6 +85,7 @@ function executeCode() {
   let endpoint = import.meta.env.VITE_API_URL;
   let requestOptions = { 
     method: "POST",
+    headers: { "auth-header": loginStore.token },
     body: JSON.stringify({ "code" : String(code.value) })
   }
   fetch(endpoint + "/execute/code", requestOptions)
@@ -89,14 +95,14 @@ function executeCode() {
           console.log(data)
 
           if(response.ok) {
-            const output = data["output"];
+            let output = data["output"];
+            if(output === "") {
+              output = data["error"];
+            }
             outputResult.value = output;
             isCodeExecuting.value = false;
           } else {
-            const errorType = data["detail"]["errorType"];
-            const errorMessage = data["detail"]["errorMessage"];
-            const errorFormatted = errorType + "\n\n" + errorMessage;
-            outputResult.value = errorFormatted;
+            outputResult.value = data["detail"];
             isCodeExecuting.value = false;
           }
       })
@@ -157,9 +163,9 @@ function loadCode() {
           v-model:value="code"
           :options="cmOptions"
         />
-        <div class="absolute top-0 right-0 z-10" title="Send Help!" @click="showModal = true">
-          <!-- Add reference sheet modal button here -->
-          <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1" name="lightbulb" size="30px" color="yellow"/>
+        <div class="absolute top-0 right-0 z-10" title="Send Help!">
+          <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1 inline-block" name="info" size="30px" color="white" @click="showReferenceModal = true"/>
+          <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1 inline-block" name="lightbulb" size="30px" color="yellow" @click="showHintModal = true"/>
         </div>
         <div class="absolute bottom-0 right-0 z-10">
           <button class="bg-blue-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="saveCode">Save</button>
@@ -181,11 +187,25 @@ function loadCode() {
         />
       </div>
 
-      <!-- Add reference sheet modal here -->
+      <!-- Build out reference modal in component to allow for per section customization -->
+      <vue-final-modal
+        v-bind="$attrs"
+        v-model="showReferenceModal"
+        classes="flex justify-center items-center"
+        content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
+      >
+        <TutorialReferenceSheet :section=section />
+        <div class="w-18 m-auto">
+          <button class="p-3 bg-green-500 rounded-lg">Got it!</button>
+        </div>
+        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showReferenceModal = false">
+          <IconSvg name="x" size="15px" />
+        </button>
+      </vue-final-modal>
 
       <vue-final-modal
         v-bind="$attrs"
-        v-model="showModal"
+        v-model="showHintModal"
         classes="flex justify-center items-center"
         content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
       >
@@ -203,7 +223,7 @@ function loadCode() {
           <hr/>
           <span>{{ content["explanation"] }}</span>
         </div>
-        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showModal = false">
+        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showHintModal = false">
           <IconSvg name="x" size="15px" />
         </button>
       </vue-final-modal>
