@@ -17,8 +17,9 @@ from contextlib import redirect_stdout
 
 class Settings(BaseSettings):
     openai_api_key: str
-    frontend_api_auth: str
+    frontend_api_pass: str
     api_auth_enabled: bool
+    mongo_db_conn: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
@@ -105,6 +106,24 @@ async def getOpenaiCompletion(prompt: str):
         ]
     )
 
+
+@app.get("/login")
+async def login(auth_header: Annotated[str | None, Header()] = None):
+    if(auth_header == settings.frontend_api_pass):
+        token = createAndStoreUserToken(settings)
+        return { "token": token }
+    else:
+        raise HTTPException(status_code=400, detail="That password is not correct")
+
+
+@app.get("/checkToken")
+async def checkToken(auth_header: Annotated[str | None, Header()] = None):
+    try:
+        valid = validateAuthHeader(auth_header, settings)
+    except Exception as e:
+        valid = False
+
+    return { "valid": valid }
 
 @app.post("/execute/code")
 async def executeCode(request: Request, auth_header: Annotated[str | None, Header()] = None):

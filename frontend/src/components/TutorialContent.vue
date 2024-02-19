@@ -82,7 +82,6 @@ function executeCode() {
     method: "POST",
     body: JSON.stringify({ "code" : String(code.value) })
   }
-  console.log(requestOptions)
   fetch(endpoint + "/execute/code", requestOptions)
       .then(async response => {
           const data = await response.json()

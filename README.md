@@ -18,12 +18,12 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
     * ~~Save OpenAI requests~~  
     * ~~Save user code~~  
 * Possibly add page for brief introduction to concepts and have a link/button to show reference page 
-* ~~Add hover effect for prev/next buttons in exercise steps display~~   
-* Encrypt authentication token to prevent plain text viewing  
+* ~~Add hover effect for prev/next buttons in exercise steps display~~    
 * Add opening screen requesting access code before allowing visitors in  
 * ~~Strip HTML tags from gpt responses~~  
 * Add actual testing framework for backend code  
 * Add login page which will be thrown up before each router action if user is not authenticated  
+* Set up basic mongo instance to store session data/tokens  
   
 ## frontend 
 npm install   

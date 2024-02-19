@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
+import { useLoginStore } from '@/stores/LoginStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,6 +49,22 @@ const router = createRouter({
       component: () => import('../views/OopView.vue')
     },
   ]
+})
+
+router.beforeEach((to) => {
+  
+  const loginStore = useLoginStore();
+
+  // Possibly send call to check token before each page navigation
+  loginStore.checkTokenStatus()
+
+  if (to.name !== 'login' && !loginStore.isLoggedIn) {
+    return { name: 'login' }
+  }
+
+  if (to.name == 'login' && loginStore.isLoggedIn) {
+    return { name: 'home' }
+  }
 })
 
 export default router

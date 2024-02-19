@@ -1,14 +1,65 @@
 from pydantic_settings import BaseSettings
 from fastapi import HTTPException
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+from bson.binary import UuidRepresentation
 import json
 import re
 import traceback
 from io import StringIO
 from html.parser import HTMLParser
+import uuid
+import datetime
+
+def createAndStoreUserToken(settings: BaseSettings):
+    uri = settings.mongo_db_conn
+    client = MongoClient(uri, server_api=ServerApi('1'), uuidRepresentation='standard')
+
+    try:
+        db = client.learntocodedb
+        sessions = db.sessions
+
+        newToken = uuid.uuid4()
+        currentTime = datetime.datetime.now(tz=datetime.timezone.utc)
+        # Set to 2 minutes for testing purposes. I think prod lifetime will be 1 week.
+        tokenLife = datetime.timedelta(minutes=2) 
+        newSession = {
+            "token": newToken,
+            "expirationDate": currentTime + tokenLife
+        }
+        sessions.insert_one(newSession)
+
+        return newToken
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="There was an issue authenticating your session.")
 
 def validateAuthHeader(auth_header: str, settings: BaseSettings):
-    if(settings.api_auth_enabled and auth_header != settings.frontend_api_auth):
-        raise HTTPException(status_code=400, detail="You are not authorized to call this endpoint.")
+
+    if(settings.api_auth_enabled):
+        uri = settings.mongo_db_conn
+        client = MongoClient(uri, server_api=ServerApi('1'), uuidRepresentation='standard')
+        # Need to check MongoDB instance for token existence and validity (not expired)
+        try:
+            db = client.learntocodedb
+            sessions = db.sessions
+
+            queryParameters = {
+                "token": uuid.UUID(auth_header),
+                "expirationDate": { "$gt": datetime.datetime.now(tz=datetime.timezone.utc) }
+            }
+
+            session = sessions.find_one(queryParameters)
+
+            print(session)
+
+            if session == None:
+                raise HTTPException(status_code=401, detail="You are not authorized to call this endpoint. Please log in again.")
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=500, detail="There was an issue authenticating your session.")
+    
+    return True
 
 
 def validateCode(code: str, auth_header: str, settings: BaseSettings):
