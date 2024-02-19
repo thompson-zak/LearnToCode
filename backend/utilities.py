@@ -11,6 +11,7 @@ from html.parser import HTMLParser
 import uuid
 import datetime
 
+
 def createAndStoreUserToken(settings: BaseSettings):
     uri = settings.mongo_db_conn
     client = MongoClient(uri, server_api=ServerApi('1'), uuidRepresentation='standard')
@@ -21,8 +22,7 @@ def createAndStoreUserToken(settings: BaseSettings):
 
         newToken = uuid.uuid4()
         currentTime = datetime.datetime.now(tz=datetime.timezone.utc)
-        # Set to 2 minutes for testing purposes. I think prod lifetime will be 1 week.
-        tokenLife = datetime.timedelta(minutes=2) 
+        tokenLife = datetime.timedelta(weeks=1)
         newSession = {
             "token": newToken,
             "expirationDate": currentTime + tokenLife
@@ -33,6 +33,7 @@ def createAndStoreUserToken(settings: BaseSettings):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="There was an issue authenticating your session.")
+
 
 def validateAuthHeader(auth_header: str, settings: BaseSettings):
 

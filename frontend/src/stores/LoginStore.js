@@ -40,10 +40,11 @@ export const useLoginStore = defineStore('login', () => {
 
     function checkTokenStatus() {
 
+        // If token is not present, ensure log in state is set to false
         if(token.value == "" || token.value == null) {
             return;
         }
-
+            
         let endpoint = import.meta.env.VITE_API_URL;
         let requestOptions = {
             headers: { "auth-header" : token.value }
@@ -67,5 +68,5 @@ export const useLoginStore = defineStore('login', () => {
             })
     }
   
-    return { isLoggedIn, logIn, logOut, setToken, clearToken, checkTokenStatus }
+    return { isLoggedIn, token, logIn, logOut, setToken, clearToken, checkTokenStatus }
   })

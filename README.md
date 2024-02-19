@@ -4,7 +4,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 ## TODO  
 * Add rubber ducky decoding feature (popup modal, button similar to lightbulb, possibly on timer)
 * ~~Migrate code execution engine to use multiprocessing~~  
-* Create prompts for 'data' section  
+* ~~Create prompts for 'data' section~~  
 * Create prompts for 'conditionals' section  
 * Create prompts for 'oop' section  
 * ~~Add loading behavior to indicate that code is currently in execution~~  
@@ -19,11 +19,12 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
     * ~~Save user code~~  
 * Possibly add page for brief introduction to concepts and have a link/button to show reference page 
 * ~~Add hover effect for prev/next buttons in exercise steps display~~    
-* Add opening screen requesting access code before allowing visitors in  
+* ~~Add opening screen requesting access code before allowing visitors in~~  
 * ~~Strip HTML tags from gpt responses~~  
 * Add actual testing framework for backend code  
-* Add login page which will be thrown up before each router action if user is not authenticated  
-* Set up basic mongo instance to store session data/tokens  
+* ~~Add login page which will be thrown up before each router action if user is not authenticated~~  
+* ~~Set up basic mongo instance to store session data/tokens~~  
+* Change passwords from hardcoded to queried from DB  
   
 ## frontend 
 npm install   

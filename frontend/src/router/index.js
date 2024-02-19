@@ -55,7 +55,9 @@ router.beforeEach((to) => {
   
   const loginStore = useLoginStore();
 
-  loginStore.checkTokenStatus()
+  loginStore.checkTokenStatus();
+
+  console.log(loginStore.token);
 
   if (to.name !== 'login' && !loginStore.isLoggedIn) {
     return { name: 'login' }
