@@ -145,10 +145,12 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
     print("stdout: " + str(stdout_output))
     print("stderr: " + str(stderr_output))
 
-    # Need to update this to only include relevant error info, not execution engine stack trace
+    trimmedError = stderr_output
     strippedError = str(stderr_output).strip()
-    firstNewline = strippedError.rindex('\n')
-    trimmedError = strippedError[firstNewline + 1 : ]
+    if(len(strippedError) != 0):
+        # We only want to grab the error type and string, not the stack trace from the execution engine
+        firstNewline = strippedError.rindex('\n')
+        trimmedError = strippedError[firstNewline + 1 : ]
 
     return {
         "output": str(stdout_output),
@@ -177,19 +179,15 @@ def runCode(code : str):
     return exec(code, globalsParameter, localsParameter)
     
 
-@app.post("/execute/code/test")
-async def executeCodeTest():
-    time.sleep(3)
-    return { 
-        "output": "Hello World!" 
-    }
-
 # Endpoint used for development purposes to minimize actual calls to OpenAI services
 @app.get("/test")
-async def test(requestTriple: bool = True):
+async def test(requestTriple: bool = True, auth_header: Annotated[str | None, Header()] = None):
+
+    validateAuthHeader(auth_header, settings)
+
     # Simulates loading times for OpenAI requests
     startTime = time.time()
-    time.sleep(1)
+    time.sleep(2)
 
     if requestTriple:
         # Loads the pre-fetched and pre-formatted chat completion containing all 3 sample exercises

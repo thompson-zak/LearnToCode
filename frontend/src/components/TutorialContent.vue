@@ -39,7 +39,7 @@ const loginStore = useLoginStore();
 
 const currentOutlineStep = ref(0)
 const showHintModal = ref(false)
-const showReferenceModal = ref(true)
+const showReferenceModal = ref(false)
 
 const code = ref("");
 const codePlaceholder = 
@@ -53,6 +53,13 @@ const isCodeExecuting = ref(false)
 const cmOptions = {
   mode: "text/x-python", // Language mode
   theme: "dracula", // Theme
+}
+
+const cmReadOnlyOptionsOutput = {
+  mode: null, // Language mode
+  theme: "dracula", // Theme
+  readOnly: true, // Read Only
+  autoRefresh: true, // Allow for autorefresh
 }
 
 const cmReadOnlyOptions = {
@@ -177,7 +184,7 @@ function loadCode() {
       <div class="relative h-[15vh]">
         <Codemirror
           v-model:value="outputResult"
-          :options="cmReadOnlyOptions"
+          :options="cmReadOnlyOptionsOutput"
         />
         <VueSpinnerGears 
           v-if="isCodeExecuting === true"

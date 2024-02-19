@@ -18,8 +18,15 @@ import TutorialTab from './../components/TutorialTab.vue'
 import TutorialContent from './../components/TutorialContent.vue'
 import TutorialFooter from './../components/TutorialFooter.vue'
 import TutorialLoadingSlideshow from './TutorialLoadingSlideshow.vue';
+import TutorialReferenceSheet from './reference/TutorialReferenceSheet.vue';
 import { ref } from 'vue';
 import { VueSpinner } from 'vue3-spinners';
+import { useLoginStore } from '@/stores/LoginStore';
+
+const loginStore = useLoginStore();
+
+// Show modal only if they have never seen it before. Closing from this screen will store a value, indicating the page has been visited.
+const showReferenceModal = ref(localStorage.getItem(props.section + "Modal") == null || localStorage.getItem(props.section + "Modal") == "")
 
 const display = ref(1);
 const content = ref([{}, {}, {}]);
@@ -29,6 +36,11 @@ const hasErrored = ref(false);
 const errorMessage = ref("");
 
 getComponentData();
+
+function closeModal() {
+  showReferenceModal.value = false;
+  localStorage.setItem(props.section + "Modal", "false")
+}
 
 function getComponentData() {
   const storedData = getLocalStorage();
@@ -55,7 +67,10 @@ function getOpenAiData() {
   } else {
     endpoint = baseUrl + "/test"
   }
-  return fetch(endpoint, {})
+  let requestOptions = { 
+    headers: { "auth-header": loginStore.token }
+  }
+  return fetch(endpoint, requestOptions)
       .then(async response => {
           const data = await response.json()
 
@@ -155,6 +170,23 @@ function setLocalStorage(item) {
           </div>
         </div>
       </div>
+
+      <!-- Build out reference modal in component to allow for per section customization -->
+      <vue-final-modal
+        v-bind="$attrs"
+        v-model="showReferenceModal"
+        classes="flex justify-center items-center"
+        content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
+      >
+        <TutorialReferenceSheet :section=section />
+        <div class="w-18 m-auto">
+          <button class="p-3 bg-green-500 rounded-lg" @click="closeModal">Got it!</button>
+        </div>
+        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="closeModal">
+          <IconSvg name="x" size="15px" />
+        </button>
+      </vue-final-modal>
+
       <TutorialFooter />
     </main>
 </template>

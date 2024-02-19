@@ -18,6 +18,10 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
     * ~~Save OpenAI requests~~  
     * ~~Save user code~~  
 * Possibly add page for brief introduction to concepts and have a link/button to show reference page 
+    * Variables page  
+    * Data page  
+    * Conditionals page  
+    * OOP page  
 * ~~Add hover effect for prev/next buttons in exercise steps display~~    
 * ~~Add opening screen requesting access code before allowing visitors in~~  
 * ~~Strip HTML tags from gpt responses~~  

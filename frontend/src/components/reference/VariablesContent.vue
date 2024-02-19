@@ -18,7 +18,7 @@ const cmReadOnlyOptions = {
   autoRefresh: true, // Allow for autorefresh
 }
 
-const exampleCode = "message = \"I have an appointment at \"\nappointmentTime = 9\nprint(message + appointmentTime)";
+const exampleCode = "message = \"My favorite number is:\"\nfavoriteNumber = 9\nprint(message)\nprint(favoriteNumber)";
 </script>
 
 <template>

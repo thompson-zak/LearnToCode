@@ -49,12 +49,9 @@ export const useLoginStore = defineStore('login', () => {
         let requestOptions = {
             headers: { "auth-header" : token.value }
         }
-        console.log(requestOptions)
         fetch(endpoint + "/checkToken", requestOptions)
             .then(async response => {
                 const data = await response.json()
-
-                console.log(data)
 
                 if(response.ok) {
                     const isValid = data["valid"];
