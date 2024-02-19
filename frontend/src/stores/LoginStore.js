@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import router from "@/router";
 
 export const useLoginStore = defineStore('login', () => {
     
@@ -34,6 +35,7 @@ export const useLoginStore = defineStore('login', () => {
         token.value = "";
         updateTokenStorage("");
         logOut();
+        router.push({ name: "login" })
     }
 
     function checkTokenStatus() {

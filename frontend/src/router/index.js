@@ -55,7 +55,6 @@ router.beforeEach((to) => {
   
   const loginStore = useLoginStore();
 
-  // Possibly send call to check token before each page navigation
   loginStore.checkTokenStatus()
 
   if (to.name !== 'login' && !loginStore.isLoggedIn) {
