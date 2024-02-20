@@ -12,8 +12,14 @@ import uuid
 import datetime
 
 
+def getMongoConnectionUri(settings: BaseSettings):
+    mongo_conn_start = "mongodb+srv://"
+    mongo_conn_end = "@learntocodecluster0.pvsvjov.mongodb.net/?retryWrites=true&w=majority"
+    return mongo_conn_start + settings.mongo_db_user + ":" + settings.mongo_db_pass + mongo_conn_end
+
+
 def createAndStoreUserToken(settings: BaseSettings):
-    uri = settings.mongo_db_conn
+    uri = getMongoConnectionUri(settings)
     client = MongoClient(uri, server_api=ServerApi('1'), uuidRepresentation='standard')
 
     try:
@@ -38,7 +44,7 @@ def createAndStoreUserToken(settings: BaseSettings):
 def validateAuthHeader(auth_header: str, settings: BaseSettings):
 
     if(settings.api_auth_enabled):
-        uri = settings.mongo_db_conn
+        uri = getMongoConnectionUri(settings)
         client = MongoClient(uri, server_api=ServerApi('1'), uuidRepresentation='standard')
         # Need to check MongoDB instance for token existence and validity (not expired)
         try:

@@ -19,7 +19,8 @@ class Settings(BaseSettings):
     openai_api_key: str
     frontend_api_pass: str
     api_auth_enabled: bool
-    mongo_db_conn: str
+    mongo_db_user: str
+    mongo_db_pass: str
 
     model_config = SettingsConfigDict(env_file=".env")
 

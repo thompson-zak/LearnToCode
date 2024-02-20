@@ -14,7 +14,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Implement validation to screen for improper code and deliver message to user~~ 
 * ~~Reformat tutorial page home and logo buttons for smaller screens (possibly into nav column)~~ 
     * Add and format button to clear exercises and reload open ai data (partially completed)
-* Implement persistent state  
+* ~~Implement persistent state~~  
     * ~~Save OpenAI requests~~  
     * ~~Save user code~~  
 * Possibly add page for brief introduction to concepts and have a link/button to show reference page 
@@ -29,7 +29,11 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Add login page which will be thrown up before each router action if user is not authenticated~~  
 * ~~Set up basic mongo instance to store session data/tokens~~  
 * Change passwords from hardcoded to queried from DB  
-* Add token auth to every call  
+* ~~Add token auth to every call~~  
+* ~~Dockerize back-end~~  
+* Dockerize front-end  
+* Deploy back-end to AWS
+* Deploy front-end to AWS
   
 ## frontend 
 npm install   
