@@ -3,6 +3,10 @@ const props = defineProps({
     section: {
         type: String,
         required: true
+    },
+    title: {
+        type: String,
+        required: true
     }
 })
 
@@ -11,7 +15,7 @@ import VariablesContent from './VariablesContent.vue';
 
 <template>
     <span class="mr-8 mb-2 text-2xl font-bold">
-        <h4>Reference Sheet</h4>
+        <h4>{{ title }}</h4>
     </span>
     <hr/>
     <div class="mt-2">

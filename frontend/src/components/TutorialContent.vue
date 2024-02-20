@@ -201,7 +201,7 @@ function loadCode() {
         classes="flex justify-center items-center"
         content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
       >
-        <TutorialReferenceSheet :section=section />
+        <TutorialReferenceSheet :section=section title="Reference Sheet"/>
         <div class="w-18 m-auto">
           <button class="p-3 bg-green-500 rounded-lg">Got it!</button>
         </div>
