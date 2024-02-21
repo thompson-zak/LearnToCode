@@ -29,3 +29,5 @@ steps:
     args: ['run', 'deploy', '$_SERVICE_NAME', 
       '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA',
       '--region', '$_DEPLOY_REGION']
+options:
+  logging: CLOUD_LOGGING_ONLY
