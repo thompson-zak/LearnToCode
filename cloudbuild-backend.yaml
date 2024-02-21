@@ -1,0 +1,31 @@
+# Create and deploy frontend docker image from latest push on main
+# Using GCP to host application 
+
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: bash
+    args: 
+     - -c
+     - |
+        cd frontend
+        docker build \
+          --build-arg OPENAI_API_KEY=$_OA_KEY \
+          --build-arg FRONTEND_API_PASS=$_FE_PASS \
+          --build-arg API_AUTH_ENABLED=$_AUTH_ENABLED \
+          --build-arg MONGO_DB_USER=$_M_USER \
+          --build-arg MONGO_DB_PASS=$_M_PASS \
+          -t $_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA .
+
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 
+           '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA']
+
+  # Entrypoint, timeout and environment variables
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    timeout: 240s
+    args: ['run', 'deploy', '$_SERVICE_NAME', 
+      '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA',
+      '--region', '$_DEPLOY_REGION']
