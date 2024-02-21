@@ -1,8 +1,0 @@
-name: Deploy to Amazon ECS
-
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - frontend/**
