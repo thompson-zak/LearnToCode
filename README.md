@@ -31,7 +31,8 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * Change passwords from hardcoded to queried from DB  
 * ~~Add token auth to every call~~  
 * ~~Dockerize back-end~~  
-* Dockerize front-end  
+* ~~Dockerize front-end~~  
+* Deploy front and back end images to AWS ECR  
 * Deploy back-end to AWS
 * Deploy front-end to AWS
   
