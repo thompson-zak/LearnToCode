@@ -52,6 +52,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: backend-master
+        working-directory: ./backend
         run: |
           # Build a docker container and
           # push it to ECR so that it can
