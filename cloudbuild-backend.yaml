@@ -15,19 +15,19 @@ steps:
           --build-arg API_AUTH_ENABLED=$_AUTH_ENABLED \
           --build-arg MONGO_DB_USER=$_M_USER \
           --build-arg MONGO_DB_PASS=$_M_PASS \
-          -t $_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:backend-$COMMIT_SHA .
+          -t $_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA .
 
   # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 
-           '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:backend-$COMMIT_SHA']
+           '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA']
 
   # Entrypoint, timeout and environment variables
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     timeout: 240s
     args: ['run', 'deploy', '$_SERVICE_NAME', 
-      '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:backend-$COMMIT_SHA',
+      '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA',
       '--region', '$_DEPLOY_REGION']
 options:
   logging: CLOUD_LOGGING_ONLY

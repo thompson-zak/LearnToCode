@@ -9,17 +9,23 @@ steps:
      - -c
      - |
         cd frontend
-        docker build -t $_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:frontend-$COMMIT_SHA --build-arg SENDGRID_SECRET=$_SENDGRID_SECRET .
+        docker build \
+          --build-arg VITE_API_URL=$_API_URL \
+          --build-arg VITE_USE_LIVE_DATA=$_LIVE_DATA \
+          --build-arg VITE_CACHE_DATA=$_CACHE_DATA \
+          -t $_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA .
 
   # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 
-           '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:frontend-$COMMIT_SHA']
+           '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA']
 
   # Entrypoint, timeout and environment variables
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     timeout: 240s
     args: ['run', 'deploy', '$_SERVICE_NAME', 
-      '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:frontend-$COMMIT_SHA',
+      '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:$COMMIT_SHA',
       '--region', '$_DEPLOY_REGION']
+options:
+  logging: CLOUD_LOGGING_ONLY
