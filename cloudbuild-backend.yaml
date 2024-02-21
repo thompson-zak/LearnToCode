@@ -8,7 +8,7 @@ steps:
     args: 
      - -c
      - |
-        cd frontend
+        cd backend
         docker build \
           --build-arg OPENAI_API_KEY=$_OA_KEY \
           --build-arg FRONTEND_API_PASS=$_FE_PASS \
