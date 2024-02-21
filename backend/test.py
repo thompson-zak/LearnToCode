@@ -49,7 +49,7 @@ def testDataFormatCompletions1():
     print("----------------------------------")
     return formattedCompletions
             
-# Dummy change 2
+# Dummy change 3 - test image overrides
 if __name__ == "__main__":
     #testVariablesFormatCompletions1()
     #testVariablesFormatCompletions2()
