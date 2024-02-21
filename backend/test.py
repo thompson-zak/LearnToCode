@@ -49,7 +49,7 @@ def testDataFormatCompletions1():
     print("----------------------------------")
     return formattedCompletions
             
-# Dummy change 4 - test image overrides
+# Dummy change 5 - test cloud run trigger
 if __name__ == "__main__":
     #testVariablesFormatCompletions1()
     #testVariablesFormatCompletions2()
