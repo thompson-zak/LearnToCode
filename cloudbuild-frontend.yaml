@@ -1,0 +1,25 @@
+# Create and deploy frontend docker image from latest push on main
+# Using GCP to host application 
+
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: bash
+    args: 
+     - -c
+     - |
+        cd frontend
+        docker build -t $_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:frontend-$COMMIT_SHA --build-arg SENDGRID_SECRET=$_SENDGRID_SECRET .
+
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 
+           '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:frontend-$COMMIT_SHA']
+
+  # Entrypoint, timeout and environment variables
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    timeout: 240s
+    args: ['run', 'deploy', '$_SERVICE_NAME', 
+      '--image', '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME/$BRANCH_NAME:frontend-$COMMIT_SHA',
+      '--region', '$_DEPLOY_REGION']
