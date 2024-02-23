@@ -75,15 +75,20 @@ function getOpenAiData() {
           const data = await response.json()
 
           if(!response.ok) {
-            errorMessage.value = "There was an error loading data from OpenAI. Please reload the page."
+            errorMessage.value = "There was an error loading data from OpenAI. Please reload the page.";
             hasErrored.value = true;
-            return null;
+            Promise.reject();
           } else {
             const completions = data["completions"];
             populateContent(completions);
             hasLoaded.value = true;
             return completions;
           }
+      })
+      .catch(() => {
+        errorMessage.value = "There was an error loading data from OpenAI. Please reload the page.";
+        hasErrored.value = true;
+        Promise.reject();
       })
 }
 
@@ -165,7 +170,7 @@ function setLocalStorage(item) {
             </div>
 
             <div v-if="hasErrored" class="col-span-4 auto-rows-max h-[70vh] flex flex-col items-center justify-center">
-                <p class="font-bold font-xl text-red-500">Using the power of AI to generate a custom lesson plan just for you</p>
+                <p class="font-bold font-xl text-red-500">{{ errorMessage }}</p>
             </div>
           </div>
         </div>

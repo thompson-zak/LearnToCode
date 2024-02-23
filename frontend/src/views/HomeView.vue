@@ -60,20 +60,20 @@ import { RouterLink } from 'vue-router';
             <IconSvg name="arrow-right-long" size="25px" class="inline-block"></IconSvg>
           </span>
           <p class="m-0 max-w-[30ch] text-sm opacity-50">
-            Try out ifs, fors, whiles and many more to perform a multitude of actions.
+            Try out ifs, elses, and elifs in order to make informed decisions based on all kinds of data.
           </p>
         </RouterLink>
 
         <RouterLink
-          to="/tutorials/oop"
+          to="/tutorials/loops"
           class="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
         <span class="mb-3 text-2xl font-semibold inline-block">
-            OOP
+            Loops
             <IconSvg name="arrow-right-long" size="25px" class="inline-block"></IconSvg>
           </span>
           <p class="m-0 max-w-[30ch] text-sm opacity-50">
-            Dip your toe into object oriented programming, the core of software engineering.
+            Dip your toe into loops, a core concept in any programming language.
           </p>
         </RouterLink>
       </div>

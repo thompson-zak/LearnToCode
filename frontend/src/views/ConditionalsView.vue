@@ -3,7 +3,7 @@ import TutorialComponent from './../components/TutorialComponent.vue'
 
 const section = "Conditionals"
 
-const sectionDescription = "These exercises are designed to help you understand the ifs, fors, and whiles."
+const sectionDescription = "These exercises are designed to help you understand conditional statements - ifs, elses, and elifs."
 
 const exercises = [
   {
