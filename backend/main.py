@@ -50,6 +50,7 @@ class CaptureOutput:
     def get_stderr(self):
         return self._stderr_output
 
+
 settings = Settings()
 app = FastAPI()
 app.add_middleware(
@@ -59,11 +60,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 client = AsyncOpenAI(
     api_key=settings.openai_api_key
 )
-
 prompts = getPrompts()
 
 # 
@@ -98,6 +97,7 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
         "executionTime": round(time.time() - startTime, 2) 
     }
 
+
 async def getOpenaiCompletion(prompt: str):
     return await client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -125,6 +125,7 @@ async def checkToken(auth_header: Annotated[str | None, Header()] = None):
         valid = False
 
     return { "valid": valid }
+
 
 @app.post("/execute/code")
 async def executeCode(request: Request, auth_header: Annotated[str | None, Header()] = None):
@@ -203,3 +204,8 @@ async def test(requestTriple: bool = True, auth_header: Annotated[str | None, He
         "completions": formattedResponse,
         "exectionTime": round(time.time() - startTime, 2)
     }
+
+
+@app.get("/ping")
+async def ping():
+    return { "detail": "pong" }
