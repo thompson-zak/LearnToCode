@@ -8,9 +8,9 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Create prompts for 'conditionals' section~~  
 * ~~Create prompts for 'oop' section~~  
 * ~~Add loading behavior to indicate that code is currently in execution~~  
-* Add timeout to code to prevent hanging requests
+* ~~Add timeout to code to prevent hanging requests~~
     * ~~User facing timeout~~
-    * Actual thread termination past timeout limit
+    * ~~Actual process termination past timeout limit~~
 * ~~Implement validation to screen for improper code and deliver message to user~~ 
 * ~~Reformat tutorial page home and logo buttons for smaller screens (possibly into nav column)~~ 
     * ~~Add and format button to clear exercises and reload open ai data~~(REMOVED)  
@@ -20,8 +20,8 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * Possibly add page for brief introduction to concepts and have a link/button to show reference page 
     * ~~Variables page~~  
     * ~~Data page~~  
-    * Conditionals page  
-    * Loops page 
+    * ~~Conditionals page~~  
+    * ~~Loops page~~ 
     * Polish each page for grammar and clarity of explanation/examples   
 * ~~Add hover effect for prev/next buttons in exercise steps display~~    
 * ~~Add opening screen requesting access code before allowing visitors in~~  
@@ -35,6 +35,7 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Dockerize front-end~~  
 * ~~Deploy front and back end to GCP~~  
 * Lock pages if not all pages from before have been visited?  
+* ~~Change to use learn to code designated keys rather than personal~~
   
 ## frontend 
 npm install   
