@@ -9,13 +9,21 @@ prompts = {
         1: "Please provide a very basic problem to help a student who has never coded before learn python syntax and variables." + PROMPT_INSTRUCTIONS,
         2: "Please provide a prompt and code outline for a problem to help a student who has never coded before learn python syntax and variables." + PROMPT_INSTRUCTIONS
     },
-    # Possibly extend this to include Queues/Stacks, Linked Lists, etc.
+    # This could be extended to include Queues/Stacks, Linked Lists, etc.
     "Data": {
         1: "Please provide a very basic problem to help a student who has only coded once before learn how to use python arrays." + PROMPT_INSTRUCTIONS,
         2: "Please provide a problem to help a student who has only coded once before learn how to use python dictionaries." + PROMPT_INSTRUCTIONS
     },
-    "Conditionals": {},
-    "OOP": {}
+    # This could be extended to include Ternary statements.
+    "Conditionals": {
+        1: "Please provide a basic problem to help a student who has only coded once before learn how to use a python if statement." + PROMPT_INSTRUCTIONS,
+        2: "Please provide a basic problem to help a student who has only coded once before learn how to use a python if, else, and elif statement." + PROMPT_INSTRUCTIONS
+    },
+    # This could be extended to include Nested Loops and Loops with 'else' statement.
+    "Loops": {
+        1: "Please provide a basic problem to help a student who has only coded once before learn how to use python for loops." + PROMPT_INSTRUCTIONS,
+        2: "Please provide a basic problem to help a student who has only coded once before learn how to use python while loops." + PROMPT_INSTRUCTIONS
+    }
 }
 
 def getPrompts():

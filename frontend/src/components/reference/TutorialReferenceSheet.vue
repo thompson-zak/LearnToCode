@@ -11,6 +11,9 @@ const props = defineProps({
 })
 
 import VariablesContent from './VariablesContent.vue';
+import DataContent from './DataContent.vue';
+import ConditionalsContent from './ConditionalsContent.vue';
+import LoopsContent from './LoopsContent.vue';
 </script>
 
 <template>
@@ -20,6 +23,12 @@ import VariablesContent from './VariablesContent.vue';
     <hr/>
     <div class="mt-2">
         <VariablesContent v-if="props.section == 'Variables'" />
+
+        <DataContent v-if="props.section == 'Data'" />
+
+        <ConditionalsContent v-if="props.section == 'Conditionals'" />
+
+        <LoopsContent v-if="props.section == 'Loops'" />
     </div>
 </template>
 

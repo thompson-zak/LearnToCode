@@ -1,21 +1,21 @@
 <script setup>
 import TutorialComponent from './../components/TutorialComponent.vue'
 
-const section = "OOP"
+const section = "Loops"
 
-const sectionDescription = "These exercises are designed to help you understand object-oriented programming, also known as OOP."
+const sectionDescription = "These exercises are designed to help you understand for and while loops."
 
 const exercises = [
   {
     id: 1,
     listIndex: 0,
-    section: "OOP",
+    section: "Loops",
     title: "Exercise 1"
   },
   {
     id: 2,
     listIndex: 1,
-    section: "OOP",
+    section: "Loops",
     title: "Exercise 2"
   }
 ]

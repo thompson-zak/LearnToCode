@@ -14,6 +14,8 @@ from utilities import *
 from prompts import *
 from io import StringIO
 from contextlib import redirect_stdout
+import traceback
+
 
 class Settings(BaseSettings):
     openai_api_key: str
@@ -50,6 +52,7 @@ class CaptureOutput:
     def get_stderr(self):
         return self._stderr_output
 
+
 settings = Settings()
 app = FastAPI()
 app.add_middleware(
@@ -59,11 +62,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 client = AsyncOpenAI(
     api_key=settings.openai_api_key
 )
-
 prompts = getPrompts()
 
 # 
@@ -98,6 +99,7 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
         "executionTime": round(time.time() - startTime, 2) 
     }
 
+
 async def getOpenaiCompletion(prompt: str):
     return await client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -126,8 +128,11 @@ async def checkToken(auth_header: Annotated[str | None, Header()] = None):
 
     return { "valid": valid }
 
+
 @app.post("/execute/code")
 async def executeCode(request: Request, auth_header: Annotated[str | None, Header()] = None):
+    startTime = time.time()
+
     jsonRequest = await request.json()
     code = jsonRequest["code"]
     validateCode(code, auth_header, settings)
@@ -136,39 +141,57 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
     p = mp.Process(target=worker, args=(code, queue))
     p.start()
     # Must do this call before call to join:
-    result, stdout_output, stderr_output = queue.get()
+
+    timeout = False
+    try:
+        stdout_output, stderr_output = queue.get(True, 5.0)
+    except Exception:
+        stdout_output = ""
+        stderr_output = ""
+        print("There has been a timeout waiting for queue")
+        timeout = True
+
+    # Check to see if the process timed out and add error message for that
+    p.join(1.0)
+    if p.is_alive():
+        print("There has been a timeout waiting for join")
+        trimmedError = "[ERROR] Your code timed out after 5 seconds and did not complete."
+        timeout = True
+
+    # This will kill the process if it is still running past timeout
+    p.terminate()
+    p.join()
     
-    # This will result in the join timing out, but it won't necessary kill the
-    # thread which is actually running the code
-    p.join(5.0)
+    # Check to see whether process has been ended
+    if p.is_alive():
+        print("Code execution process orphaned.")
+    else:
+        # This will release all resource associated with the process
+        p.close()
+        print("Code execution process successfully closed.")
 
-    print("result: " + str(result))
-    print("stdout: " + str(stdout_output))
-    print("stderr: " + str(stderr_output))
-
-    trimmedError = stderr_output
-    strippedError = str(stderr_output).strip()
-    if(len(strippedError) != 0):
-        # We only want to grab the error type and string, not the stack trace from the execution engine
-        firstNewline = strippedError.rindex('\n')
-        trimmedError = strippedError[firstNewline + 1 : ]
+    if not timeout:
+        trimmedError = stderr_output
+        strippedError = str(stderr_output).strip()
+        if(len(strippedError) != 0):
+            # We only want to grab the error type and string, not the stack trace from the execution engine
+            firstNewline = strippedError.rindex('\n')
+            trimmedError = strippedError[firstNewline + 1 : ]
 
     return {
         "output": str(stdout_output),
-        "error": trimmedError
+        "error": trimmedError,
+        "executionTime": round(time.time() - startTime)
     } 
 
 
 def worker(code, queue):
-    import traceback
-
     with CaptureOutput() as capturer:
         try:
-            result = runCode(code)
-        except Exception as e:
-            result = e
+            runCode(code)
+        except Exception:
             print(traceback.format_exc(), file=sys.stderr)
-    queue.put((result, capturer.get_stdout(), capturer.get_stderr()))
+    queue.put((capturer.get_stdout(), capturer.get_stderr()))
 
 
 def runCode(code : str):
@@ -203,3 +226,8 @@ async def test(requestTriple: bool = True, auth_header: Annotated[str | None, He
         "completions": formattedResponse,
         "exectionTime": round(time.time() - startTime, 2)
     }
+
+
+@app.get("/ping")
+async def ping():
+    return { "detail": "pong" }
