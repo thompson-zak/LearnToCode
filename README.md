@@ -36,6 +36,10 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Deploy front and back end to GCP~~  
 * Lock pages if not all pages from before have been visited?  
 * ~~Change to use learn to code designated keys rather than personal~~
+* Enforce code character length limit
+* Log key data points to Mongo in order to get a picture of overall performance  
+    * Everytime a process is orphaned (include code blob)
+    * Response time for each API call, with endpoint labeling
   
 ## frontend 
 npm install   

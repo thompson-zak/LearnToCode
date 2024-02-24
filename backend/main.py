@@ -131,6 +131,8 @@ async def checkToken(auth_header: Annotated[str | None, Header()] = None):
 
 @app.post("/execute/code")
 async def executeCode(request: Request, auth_header: Annotated[str | None, Header()] = None):
+    startTime = time.time()
+
     jsonRequest = await request.json()
     code = jsonRequest["code"]
     validateCode(code, auth_header, settings)
@@ -178,7 +180,8 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
 
     return {
         "output": str(stdout_output),
-        "error": trimmedError
+        "error": trimmedError,
+        "executionTime": round(time.time() - startTime)
     } 
 
 
