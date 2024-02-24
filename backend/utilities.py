@@ -71,8 +71,6 @@ def validateAuthHeader(auth_header: str, settings: BaseSettings):
 
 def validateCode(code: str, auth_header: str, settings: BaseSettings):
     validateAuthHeader(auth_header, settings)
-    
-    print("I am currently validating user provided code.")
 
     try:
         codeObject = compile(code, "User supplied code", "exec")
