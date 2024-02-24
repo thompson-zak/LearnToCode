@@ -102,10 +102,15 @@ function executeCode() {
           console.log(data)
 
           if(response.ok) {
-            let output = data["output"];
-            if(output === "") {
-              output = data["error"];
+            let output = data["output"].trimEnd();
+            let error = data["error"];
+            if (error != null && error.length > 0) {
+              if(output.length > 0) {
+                output += "\n"
+              }
+              output += error
             }
+
             outputResult.value = output;
             isCodeExecuting.value = false;
           } else {
