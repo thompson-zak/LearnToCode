@@ -113,7 +113,15 @@ function setLocalStorage(item) {
 </script>
 
 <template>
-    <main class="flex min-h-screen flex-col items-center justify-between px-24 pb-12 pt-20">
+    <main v-if="showReferenceModal" class="flex min-h-screen flex-col items-center justify-between px-24 pb-12 pt-20">
+      <div class="w-1/2 m-auto">
+        <TutorialReferenceSheet :section=section title="Introduction"/>
+        <div class="w-full text-center mt-3">
+          <button class="p-3 bg-green-500 rounded-lg" @click="closeModal">Got it!</button>
+        </div>
+      </div>
+    </main>
+    <main v-else class="flex min-h-screen flex-col items-center justify-between px-24 pb-12 pt-20">
       <div class="z-10 max-w-6xl w-full items-center justify-between font-mono text-sm lg:flex">
         <div class="w-full">
           <!--
@@ -175,22 +183,6 @@ function setLocalStorage(item) {
           </div>
         </div>
       </div>
-
-      <!-- Build out reference modal in component to allow for per section customization -->
-      <vue-final-modal
-        v-bind="$attrs"
-        v-model="showReferenceModal"
-        classes="flex justify-center items-center"
-        content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
-      >
-        <TutorialReferenceSheet :section=section title="Introduction"/>
-        <div class="w-18 m-auto">
-          <button class="p-3 bg-green-500 rounded-lg" @click="closeModal">Got it!</button>
-        </div>
-        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="closeModal">
-          <IconSvg name="x" size="15px" />
-        </button>
-      </vue-final-modal>
 
       <TutorialFooter />
     </main>

@@ -207,9 +207,6 @@ function loadCode() {
         content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
       >
         <TutorialReferenceSheet :section=section title="Reference Sheet"/>
-        <div class="w-18 m-auto">
-          <button class="p-3 bg-green-500 rounded-lg">Got it!</button>
-        </div>
         <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showReferenceModal = false">
           <IconSvg name="x" size="15px" />
         </button>

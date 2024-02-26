@@ -40,6 +40,8 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * Log key data points to Mongo in order to get a picture of overall performance  
     * Everytime a process is orphaned (include code blob)
     * Response time for each API call, with endpoint labeling
+* Improve performance in regards to memory, it seems webpage can be very RAM greedy especially if open for a while  
+* ~~Transition intro modal to be in-page~~
   
 ## frontend 
 npm install   
