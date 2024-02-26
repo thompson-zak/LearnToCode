@@ -1,8 +1,30 @@
 # learntocode
 A tutorial to help beginners learn coding through simple answers, powered by ChatGPT to create unique and interesting prompts.  
   
+## Local Development
+### frontend 
+npm install   
+npm run dev  
+
+### backend  
+source ./env/Scripts/activate  
+uvicorn main:app --reload  
+
 ## TODO  
+### User impact features  
 * Add rubber ducky decoding feature (popup modal, button similar to lightbulb, possibly on timer)
+* Polish each page for grammar and clarity of explanation/examples  
+* Improve performance in regards to memory, it seems webpage can be very RAM greedy especially if open for a while  
+  
+### Nice to haves  
+* Add actual testing framework for backend code 
+* Change passwords from hardcoded to queried from DB  
+* Enforce code character length limit  
+* Log key data points to Mongo in order to get a picture of overall performance  
+    * Everytime a process is orphaned (include code blob)  
+    * Response time for each API call, with endpoint labeling  
+  
+### Done    
 * ~~Migrate code execution engine to use multiprocessing~~  
 * ~~Create prompts for 'data' section~~  
 * ~~Create prompts for 'conditionals' section~~  
@@ -17,36 +39,20 @@ A tutorial to help beginners learn coding through simple answers, powered by Cha
 * ~~Implement persistent state~~  
     * ~~Save OpenAI requests~~  
     * ~~Save user code~~  
-* Possibly add page for brief introduction to concepts and have a link/button to show reference page 
+* ~~Possibly add page for brief introduction to concepts and have a link/button to show reference page~~ 
     * ~~Variables page~~  
     * ~~Data page~~  
     * ~~Conditionals page~~  
-    * ~~Loops page~~ 
-    * Polish each page for grammar and clarity of explanation/examples   
+    * ~~Loops page~~  
 * ~~Add hover effect for prev/next buttons in exercise steps display~~    
 * ~~Add opening screen requesting access code before allowing visitors in~~  
-* ~~Strip HTML tags from gpt responses~~  
-* Add actual testing framework for backend code  
+* ~~Strip HTML tags from gpt responses~~   
 * ~~Add login page which will be thrown up before each router action if user is not authenticated~~  
 * ~~Set up basic mongo instance to store session data/tokens~~  
-* Change passwords from hardcoded to queried from DB  
 * ~~Add token auth to every call~~  
 * ~~Dockerize back-end~~  
 * ~~Dockerize front-end~~  
-* ~~Deploy front and back end to GCP~~  
-* Lock pages if not all pages from before have been visited?  
+* ~~Deploy front and back end to GCP~~   
 * ~~Change to use learn to code designated keys rather than personal~~
-* Enforce code character length limit
-* Log key data points to Mongo in order to get a picture of overall performance  
-    * Everytime a process is orphaned (include code blob)
-    * Response time for each API call, with endpoint labeling
-* Improve performance in regards to memory, it seems webpage can be very RAM greedy especially if open for a while  
 * ~~Transition intro modal to be in-page~~
   
-## frontend 
-npm install   
-npm run dev  
-
-## backend  
-source ./env/Scripts/activate  
-uvicorn main:app --reload  
