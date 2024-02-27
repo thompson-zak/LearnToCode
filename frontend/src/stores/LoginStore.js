@@ -59,7 +59,6 @@ export const useLoginStore = defineStore('login', () => {
                         clearToken();
                     }
                 } else {
-                    console.log("There was an issue validating your token.");
                     clearToken();
                 }
             })
