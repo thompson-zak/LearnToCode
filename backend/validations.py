@@ -93,7 +93,7 @@ def validateCode(code: str, auth_header: str, settings: BaseSettings, tokenCache
 
 
 def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str, settings: BaseSettings, tokenCache: dict):
-    validateAuthHeader(auth_header, settings)
+    validateAuthHeader(auth_header, settings, tokenCache)
             
     prompts = getPrompts()
     section = prompts.get(requestedSection, None)
