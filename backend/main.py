@@ -7,14 +7,10 @@ from openai import AsyncOpenAI
 import time
 import asyncio
 import json
-import multiprocessing as mp
-import sys
 from random import randint
-from utilities import *
-from prompts import *
-from io import StringIO
-from contextlib import redirect_stdout
-import traceback
+from validations import *
+from codeExecution import execute
+from formatting import formatCompletions
 
 
 class Settings(BaseSettings):
@@ -26,32 +22,6 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env")
 
-class CaptureOutput:
-    def __enter__(self):
-        self._stdout_output = ''
-        self._stderr_output = ''
-
-        self._stdout = sys.stdout
-        sys.stdout = StringIO()
-
-        self._stderr = sys.stderr
-        sys.stderr = StringIO()
-
-        return self
-
-    def __exit__(self, *args):
-        self._stdout_output = sys.stdout.getvalue()
-        sys.stdout = self._stdout
-
-        self._stderr_output = sys.stderr.getvalue()
-        sys.stderr = self._stderr
-
-    def get_stdout(self):
-        return self._stdout_output
-
-    def get_stderr(self):
-        return self._stderr_output
-
 
 settings = Settings()
 app = FastAPI()
@@ -62,10 +32,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.tokenCache = {}
 client = AsyncOpenAI(
     api_key=settings.openai_api_key
 )
-prompts = getPrompts()
 
 # 
 # API used from front-end to call for ChatGPT responses to fill the various exercises provided to students
@@ -86,7 +56,7 @@ async def root(section: str, id: int = -1, auth_header: Annotated[str | None, He
 
     startTime = time.time()
 
-    requestedPrompts = validateAndParsePrompts(section, id, auth_header, prompts, settings)
+    requestedPrompts = validateAndParsePrompts(section, id, auth_header, settings, app.tokenCache)
 
     completions = await asyncio.gather(*[getOpenaiCompletion(prompt[1]) for prompt in requestedPrompts])
 
@@ -113,7 +83,7 @@ async def getOpenaiCompletion(prompt: str):
 @app.get("/login")
 async def login(auth_header: Annotated[str | None, Header()] = None):
     if(auth_header == settings.frontend_api_pass):
-        token = createAndStoreUserToken(settings)
+        token = createAndStoreUserToken(settings, app.tokenCache)
         return { "token": token }
     else:
         raise HTTPException(status_code=400, detail="That password is not correct")
@@ -122,7 +92,7 @@ async def login(auth_header: Annotated[str | None, Header()] = None):
 @app.get("/checkToken")
 async def checkToken(auth_header: Annotated[str | None, Header()] = None):
     try:
-        valid = validateAuthHeader(auth_header, settings)
+        valid = validateAuthHeader(auth_header, settings, app.tokenCache)
     except Exception as e:
         valid = False
 
@@ -135,79 +105,22 @@ async def executeCode(request: Request, auth_header: Annotated[str | None, Heade
 
     jsonRequest = await request.json()
     code = jsonRequest["code"]
-    validateCode(code, auth_header, settings)
+    validateCode(code, auth_header, settings, app.tokenCache)
 
-    queue = mp.Queue()
-    p = mp.Process(target=worker, args=(code, queue))
-    p.start()
-    # Must do this call before call to join:
-
-    timeout = False
-    try:
-        stdout_output, stderr_output = queue.get(True, 5.0)
-    except Exception:
-        stdout_output = ""
-        stderr_output = ""
-        print("There has been a timeout waiting for queue")
-        timeout = True
-
-    # Check to see if the process timed out and add error message for that
-    p.join(1.0)
-    if p.is_alive():
-        print("There has been a timeout waiting for join")
-        trimmedError = "[ERROR] Your code timed out after 5 seconds and did not complete."
-        timeout = True
-
-    # This will kill the process if it is still running past timeout
-    p.terminate()
-    p.join()
-    
-    # Check to see whether process has been ended
-    if p.is_alive():
-        print("Code execution process orphaned.")
-    else:
-        # This will release all resource associated with the process
-        p.close()
-        print("Code execution process successfully closed.")
-
-    if not timeout:
-        trimmedError = stderr_output
-        strippedError = str(stderr_output).strip()
-        if(len(strippedError) != 0):
-            # We only want to grab the error type and string, not the stack trace from the execution engine
-            firstNewline = strippedError.rindex('\n')
-            trimmedError = strippedError[firstNewline + 1 : ]
+    output, error = execute(code) 
 
     return {
-        "output": str(stdout_output),
-        "error": trimmedError,
+        "output": str(output),
+        "error": error,
         "executionTime": round(time.time() - startTime)
     } 
 
-
-def worker(code, queue):
-    with CaptureOutput() as capturer:
-        try:
-            runCode(code)
-        except Exception:
-            print(traceback.format_exc(), file=sys.stderr)
-    queue.put((capturer.get_stdout(), capturer.get_stderr()))
-
-
-def runCode(code : str):
-    # set globals parameter to none
-    globalsParameter = {'__builtins__' : None}
-    # set locals parameter to take only print()
-    localsParameter = {'print': print}
-    # successful execution will result in None returned
-    return exec(code, globalsParameter, localsParameter)
-    
 
 # Endpoint used for development purposes to minimize actual calls to OpenAI services
 @app.get("/test")
 async def test(requestTriple: bool = True, auth_header: Annotated[str | None, Header()] = None):
 
-    validateAuthHeader(auth_header, settings)
+    validateAuthHeader(auth_header, settings, app.tokenCache)
 
     # Simulates loading times for OpenAI requests
     startTime = time.time()
@@ -215,10 +128,10 @@ async def test(requestTriple: bool = True, auth_header: Annotated[str | None, He
 
     if requestTriple:
         # Loads the pre-fetched and pre-formatted chat completion containing all 3 sample exercises
-        filePath = "./test_resources/variables/sample_multiple_formatted_completion.json"
+        filePath = "./test/variables/sample_multiple_formatted_completion.json"
     else:
         # Loads one of two pre-fetched and pre-formatted chat completion responses
-        filePath = "./test_resources/variables/sample_formatted_completion_" + str(randint(1,2)) + ".json"
+        filePath = "./test/variables/sample_formatted_completion_" + str(randint(1,2)) + ".json"
 
     file = open(filePath)
     formattedResponse = json.load(file)
