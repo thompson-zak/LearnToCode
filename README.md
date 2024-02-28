@@ -15,7 +15,6 @@ uvicorn main:app --reload
 * Add rubber ducky decoding feature (popup modal, button similar to lightbulb, possibly on timer)
 * Polish each page for grammar and clarity of explanation/examples  
 * Improve performance in regards to memory, it seems webpage can be very RAM greedy especially if open for a while  
-* Implement token cache to speed up response times. Do in-mem per-server cache first, can switch to Redis or similar if necessary later.  
   
 ### Nice to haves  
 * Add actual testing framework for backend code 
@@ -24,7 +23,7 @@ uvicorn main:app --reload
 * Log key data points to Mongo in order to get a picture of overall performance  
     * Everytime a process is orphaned (include code blob)  
     * Response time for each API call, with endpoint labeling  
-* Refactor backend code to be more neatly packed into modular classes/files
+* Look to improve OpenAI query response times  
   
 ### Done    
 * ~~Migrate code execution engine to use multiprocessing~~  
@@ -57,4 +56,8 @@ uvicorn main:app --reload
 * ~~Deploy front and back end to GCP~~   
 * ~~Change to use learn to code designated keys rather than personal~~
 * ~~Transition intro modal to be in-page~~
-  
+* ~~Implement token cache to speed up response times. Do in-mem per-server cache first, can switch to Redis or similar if necessary later.~~  
+* ~~Need to add NGINX configuration and apply to dockerfile for cloud hosting~~
+* ~~Create env file in dockerfile~~  
+* ~~Check caching behavior when running on docker/nginx~~  
+* ~~Refactor backend code to be more neatly packed into modular classes/files~~  
