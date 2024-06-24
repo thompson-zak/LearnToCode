@@ -52,11 +52,11 @@ class CompletionsResponse(BaseModel):
     executionTime: float = -1.0
 
 @app.get("/")
-async def root(section: str, id: int = -1, auth_header: Annotated[str | None, Header()] = None) -> CompletionsResponse:
+async def root(section: str, id: int = -1, track: str = "None", auth_header: Annotated[str | None, Header()] = None) -> CompletionsResponse:
 
     startTime = time.time()
 
-    requestedPrompts = validateAndParsePrompts(section, id, auth_header, settings, app.tokenCache)
+    requestedPrompts = validateAndParsePrompts(section, id, track, auth_header, settings, app.tokenCache)
 
     completions = await asyncio.gather(*[getOpenaiCompletion(prompt[1]) for prompt in requestedPrompts])
 

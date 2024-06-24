@@ -92,10 +92,10 @@ def validateCode(code: str, auth_header: str, settings: BaseSettings, tokenCache
     return None
 
 
-def validateAndParsePrompts(requestedSection: str, id: int, auth_header: str, settings: BaseSettings, tokenCache: dict):
+def validateAndParsePrompts(requestedSection: str, id: int, track: str, auth_header: str, settings: BaseSettings, tokenCache: dict):
     validateAuthHeader(auth_header, settings, tokenCache)
             
-    prompts = getPrompts()
+    prompts = getPrompts(track)
     section = prompts.get(requestedSection, None)
     if(section == None): 
         raise HTTPException(status_code=400, detail="Invalid section provided.")
