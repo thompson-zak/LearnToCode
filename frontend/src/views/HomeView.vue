@@ -1,5 +1,9 @@
 <script setup>
 import { RouterLink } from 'vue-router';
+import Modal from '../components/TracksModal.vue';
+import { useTrackStore } from '@/stores/TrackStore';
+
+const trackStore = useTrackStore();
 </script>
 
 <template>
@@ -78,6 +82,10 @@ import { RouterLink } from 'vue-router';
         </RouterLink>
       </div>
     </main>
+
+    <Teleport to="body">
+      <modal :show="trackStore.track === ''" @close="showTracksModal = false"></modal>
+    </Teleport>
 </template>
 
 <style></style>

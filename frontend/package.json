@@ -17,6 +17,7 @@
     "v-svg-icons": "^1.2.1",
     "vue": "^3.3.11",
     "vue-final-modal": "^3.4.11",
+    "vue-multiselect": "^3.0.0",
     "vue-router": "^4.2.5",
     "vue-writer": "^1.2.0",
     "vue3-spinners": "^1.2.2"
