@@ -165,6 +165,7 @@ function setLocalStorage(item) {
                 <KeepAlive>
                   <TutorialContent v-if="display == exercise.id"
                     :section=section
+                    :id=display
                     :title=exercise.title
                     :description=sectionDescription
                     :content=content[exercise.listIndex]

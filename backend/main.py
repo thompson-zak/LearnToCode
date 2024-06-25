@@ -8,9 +8,9 @@ import time
 import asyncio
 import json
 from random import randint
-from validations import *
+from utils import *
 from codeExecution import execute
-from formatting import formatCompletions
+from formatting import formatCompletions, formatValidityCompletion
 
 
 class Settings(BaseSettings):
@@ -58,6 +58,10 @@ async def root(section: str, id: int = -1, track: str = "None", auth_header: Ann
 
     requestedPrompts = validateAndParsePrompts(section, id, track, auth_header, settings, app.tokenCache)
 
+    print("------------Prompts------------")
+    print(requestedPrompts)
+    print("----------------------------------")
+
     completions = await asyncio.gather(*[getOpenaiCompletion(prompt[1]) for prompt in requestedPrompts])
 
     completionsWithKeys = [{"key": index+1, "completion": completions[index]} for index in range(0, len(completions))]
@@ -74,10 +78,29 @@ async def getOpenaiCompletion(prompt: str):
     return await client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            #{"role": "system", "content": "You are a computer science professor, skilled in explaining complex programming concepts to beginners."},
             {"role": "user", "content": prompt}
         ]
     )
+
+
+@app.post("/execute/code/validation")
+async def validateUserSolution(request: Request, auth_header: Annotated[str | None, Header()] = None):
+    validateAuthHeader(auth_header, settings, app.tokenCache)
+
+    jsonRequest = await request.json()
+    assistantMessage = jsonRequest["assistantMessage"]
+    code = jsonRequest["code"]
+    userMessage = "Is this code a correct solution to the above problem? Please provide a yes or no answer.\n{code}".format(code=code)
+
+    completion = await client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "assistant", "content": assistantMessage},
+            {"role": "user", "content": userMessage}
+        ]
+    )
+
+    return formatValidityCompletion(completion)
 
 
 @app.get("/login")
