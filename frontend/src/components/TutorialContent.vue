@@ -95,7 +95,6 @@ function incrementStep() {
 function executeCode() {
   pointsStore.updatePoints(5, props.section, props.id);
   pointsStore.getPointsTotal();
-  let isSuccessfulExecution = false;
   let outputStore = "";
 
   // First, remove previous output so there's no confusion
@@ -110,67 +109,69 @@ function executeCode() {
     body: JSON.stringify({ "code" : String(code.value) })
   }
   fetch(endpoint + "/execute/code", requestOptions)
-      .then(async response => {
-          const data = await response.json()
+    .then(async response => {
+        const data = await response.json()
 
-          console.log(data)
+        console.log(data)
 
-          if(response.ok) {
-            let output = data["output"].trimEnd();
-            outputStore = output;
-            let error = data["error"];
-            if (error != null && error.length > 0) {
-              // Error case
-              if(output.length > 0) {
-                output += "\n";
-              }
-              output += error;
-              showResultModal.value = true;
-              showSuccessInResultModal.value = false;
-              outputResult.value = output;
-              isCodeExecuting.value = false;
-            } else {
-              // Success case
-              console.log("Success");
-              isSuccessfulExecution = true;
-            }
-          } else {
+        if(response.ok) {
+          let output = data["output"].trimEnd();
+          outputStore = output;
+          let error = data["error"];
+          if (error != null && error.length > 0) {
             // Error case
+            if(output.length > 0) {
+              output += "\n";
+            }
+            output += error;
             showResultModal.value = true;
             showSuccessInResultModal.value = false;
-            outputResult.value = data["detail"];
+            outputResult.value = output;
             isCodeExecuting.value = false;
+          } else {
+            // Success case
+            console.log("Success");
+            executeCodeValidation(outputStore);
           }
-      })
-
-  if(isSuccessfulExecution) {
-    const localStorageGptInfo = JSON.parse(localStorage.getItem(props.section.toString()));
-    const localStorageGptRawResponse = localStorageGptInfo[props.id]["rawContent"];
-    let validityRequestoptions = { 
-      method: "POST",
-      headers: { "auth-header": loginStore.token },
-      body: JSON.stringify({
-        "assistantMessage": localStorageGptRawResponse,
-        "code" : String(code.value) 
-      })
-    }
-    fetch(endpoint + "/execute/code/validation", validityRequestoptions)
-      .then(async response => {
-        const data = await response.json();
-
-        console.log(data);
-
-        if(data["isValid"]) {
-          showResultModal.value = true;
-          showSuccessInResultModal.value = true;
-          outputResult.value = outputStore;
-          isCodeExecuting.value = false;
         } else {
+          // Error case
           showResultModal.value = true;
           showSuccessInResultModal.value = false;
+          outputResult.value = data["detail"];
+          isCodeExecuting.value = false;
         }
-      })
+    })
+}
+
+function executeCodeValidation(outputStore) {
+  let endpoint = import.meta.env.VITE_API_URL;
+  const localStorageGptInfo = JSON.parse(localStorage.getItem(props.section.toString()));
+  const localStorageGptRawResponse = localStorageGptInfo[props.id]["rawContent"];
+  let validityRequestoptions = { 
+    method: "POST",
+    headers: { "auth-header": loginStore.token },
+    body: JSON.stringify({
+      "assistantMessage": localStorageGptRawResponse,
+      "code" : String(code.value) 
+    })
   }
+  console.log(JSON.stringify(validityRequestoptions));
+  fetch(endpoint + "/execute/code/validation", validityRequestoptions)
+    .then(async response => {
+      const data = await response.json();
+
+      console.log(data);
+
+      if(data["isValid"]) {
+        showResultModal.value = true;
+        showSuccessInResultModal.value = true;
+        outputResult.value = outputStore;
+        isCodeExecuting.value = false;
+      } else {
+        showResultModal.value = true;
+        showSuccessInResultModal.value = false;
+      }
+    })
 }
 
 function saveCode() {

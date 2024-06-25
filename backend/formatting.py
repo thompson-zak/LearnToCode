@@ -18,6 +18,13 @@ class MLStripper(HTMLParser):
 
 
 def extractOpenAiContent(completion):
+    if not isinstance(completion, dict):
+        completion = vars(completion)
+
+    print("------------Completion------------")
+    print(completion)
+    print("----------------------------------")
+
     choices = completion.get("choices", None)
     if choices == None or len(choices) == 0:
         raise HTTPException("OpenAI response does not contain choices object or choices object is empty")
@@ -46,12 +53,6 @@ def formatCompletions(completionsWithKeys):
     for completionWithKey in completionsWithKeys:
 
         completion = completionWithKey["completion"]
-        if not isinstance(completion, dict):
-            completion = vars(completion)
-
-        print("------------Completion------------")
-        print(completion)
-        print("----------------------------------")
 
         content = extractOpenAiContent(completion)
         
@@ -105,14 +106,10 @@ def formatCompletions(completionsWithKeys):
 
 
 def formatValidityCompletion(completion):
-    print("------------Completion------------")
-    print(completion)
-    print("----------------------------------")
-
     content = extractOpenAiContent(completion)
     contentLowercase = content.lower()
     return {
-        "isValid": contentLowercase.contains("yes")
+        "isValid": ("yes" in contentLowercase)
     }
 
 
