@@ -7,7 +7,7 @@ npm install
 npm run dev  
 
 ### backend  
-python -m venv env
+python -m venv env  
 source ./env/Scripts/activate  
 uvicorn main:app --reload  
 
