@@ -93,8 +93,7 @@ function incrementStep() {
 }
 
 function executeCode() {
-  pointsStore.updatePoints(5, props.section, props.id);
-  pointsStore.getPointsTotal();
+  saveCode();
   let outputStore = "";
 
   // First, remove previous output so there's no confusion
@@ -130,7 +129,6 @@ function executeCode() {
             isCodeExecuting.value = false;
           } else {
             // Success case
-            console.log("Success");
             executeCodeValidation(outputStore);
           }
         } else {
@@ -167,9 +165,11 @@ function executeCodeValidation(outputStore) {
         showSuccessInResultModal.value = true;
         outputResult.value = outputStore;
         isCodeExecuting.value = false;
+        pointsStore.updatePoints(1, props.section, props.id);
       } else {
         showResultModal.value = true;
         showSuccessInResultModal.value = false;
+        pointsStore.updatePoints(0, props.section, props.id);
       }
     })
 }

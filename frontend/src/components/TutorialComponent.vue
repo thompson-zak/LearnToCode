@@ -17,6 +17,7 @@ const props = defineProps({
 import TutorialTab from './../components/TutorialTab.vue'
 import TutorialContent from './../components/TutorialContent.vue'
 import TutorialFooter from './../components/TutorialFooter.vue'
+import ProgressComponent from './../components/ProgressComponent.vue';
 import TutorialLoadingSlideshow from './TutorialLoadingSlideshow.vue';
 import TutorialReferenceSheet from './reference/TutorialReferenceSheet.vue';
 import { ref } from 'vue';
@@ -135,8 +136,8 @@ function setLocalStorage(item) {
           <div class="grid grid-cols-5 w-full">
             <div class="bg-transparent mr-5 flex flex-1 flex-col justify-between">
   
-              <div>
-                <h1 class="font-bold text-2xl">
+              <div class="p-2 border-4 rounded-lg border-zinc-500">
+                <h1 class="font-bold text-2xl mb-2 border-b-2 border-zinc-500">
                   {{ section }}
                 </h1>
     
@@ -144,6 +145,8 @@ function setLocalStorage(item) {
                   <TutorialTab :tabTitle=exercise.title @click="switchTab(exercise.id)" />
                 </div>
               </div>
+
+              <ProgressComponent></ProgressComponent>
 
               <RouterLink
                 to="/"
