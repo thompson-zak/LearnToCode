@@ -4,6 +4,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  id: {
+    type: Number,
+    required: true
+  },
   title: {
     type: String,
     required: true
@@ -21,7 +25,9 @@ const props = defineProps({
 import { ref } from 'vue'
 import { VueSpinnerGears } from 'vue3-spinners';
 import TutorialReferenceSheet from './reference/TutorialReferenceSheet.vue';
+import Modal from '../components/CodeResultModal.vue';
 import { useLoginStore } from '@/stores/LoginStore';
+import { usePointsStore } from '@/stores/PointsStore';
 
 // *** Code Mirror Dependencies *** //
 import Codemirror from "codemirror-editor-vue3";
@@ -36,10 +42,13 @@ import "codemirror/theme/dracula.css";
 // ******************************* //
 
 const loginStore = useLoginStore();
+const pointsStore = usePointsStore();
 
-const currentOutlineStep = ref(0)
-const showHintModal = ref(false)
-const showReferenceModal = ref(false)
+const currentOutlineStep = ref(0);
+const showHintModal = ref(false);
+const showReferenceModal = ref(false);
+const showResultModal = ref(false);
+const showSuccessInResultModal = ref(false);
 
 const code = ref("");
 const codePlaceholder = 
@@ -84,6 +93,9 @@ function incrementStep() {
 }
 
 function executeCode() {
+  saveCode();
+  let outputStore = "";
+
   // First, remove previous output so there's no confusion
   outputResult.value = "";
   isCodeExecuting.value = true;
@@ -96,28 +108,70 @@ function executeCode() {
     body: JSON.stringify({ "code" : String(code.value) })
   }
   fetch(endpoint + "/execute/code", requestOptions)
-      .then(async response => {
-          const data = await response.json()
+    .then(async response => {
+        const data = await response.json()
 
-          console.log(data)
+        console.log(data)
 
-          if(response.ok) {
-            let output = data["output"].trimEnd();
-            let error = data["error"];
-            if (error != null && error.length > 0) {
-              if(output.length > 0) {
-                output += "\n"
-              }
-              output += error
+        if(response.ok) {
+          let output = data["output"].trimEnd();
+          outputStore = output;
+          let error = data["error"];
+          if (error != null && error.length > 0) {
+            // Error case
+            if(output.length > 0) {
+              output += "\n";
             }
-
+            output += error;
+            showResultModal.value = true;
+            showSuccessInResultModal.value = false;
             outputResult.value = output;
             isCodeExecuting.value = false;
           } else {
-            outputResult.value = data["detail"];
-            isCodeExecuting.value = false;
+            // Success case
+            executeCodeValidation(outputStore);
           }
-      })
+        } else {
+          // Error case
+          showResultModal.value = true;
+          showSuccessInResultModal.value = false;
+          outputResult.value = data["detail"];
+          isCodeExecuting.value = false;
+        }
+    })
+}
+
+function executeCodeValidation(outputStore) {
+  let endpoint = import.meta.env.VITE_API_URL;
+  const localStorageGptInfo = JSON.parse(localStorage.getItem(props.section.toString()));
+  const localStorageGptRawResponse = localStorageGptInfo[props.id]["rawContent"];
+  let validityRequestoptions = { 
+    method: "POST",
+    headers: { "auth-header": loginStore.token },
+    body: JSON.stringify({
+      "assistantMessage": localStorageGptRawResponse,
+      "code" : String(code.value) 
+    })
+  }
+  console.log(JSON.stringify(validityRequestoptions));
+  fetch(endpoint + "/execute/code/validation", validityRequestoptions)
+    .then(async response => {
+      const data = await response.json();
+
+      console.log(data);
+
+      if(data["isValid"]) {
+        showResultModal.value = true;
+        showSuccessInResultModal.value = true;
+        outputResult.value = outputStore;
+        isCodeExecuting.value = false;
+        pointsStore.updatePoints(1, props.section, props.id);
+      } else {
+        showResultModal.value = true;
+        showSuccessInResultModal.value = false;
+        pointsStore.updatePoints(0, props.section, props.id);
+      }
+    })
 }
 
 function saveCode() {
@@ -236,6 +290,10 @@ function loadCode() {
           <IconSvg name="x" size="15px" />
         </button>
       </vue-final-modal>
+
+      <Teleport to="body">
+        <modal :show="showResultModal" :isSuccess="showSuccessInResultModal" @close="showResultModal = false"></modal>
+      </Teleport>
 
   </div>
 </template>

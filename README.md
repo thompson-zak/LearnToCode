@@ -7,11 +7,14 @@ npm install
 npm run dev  
 
 ### backend  
+python -m venv env
 source ./env/Scripts/activate  
 uvicorn main:app --reload  
 
 ## TODO  
 ### User impact features  
+* Add ability for users to pick tracks and to have that reflect in OpenAI prompting
+* Gamify the experience, adding answer verification will can grant points for good code
 * Add rubber ducky decoding feature (popup modal, button similar to lightbulb, possibly on timer)
 * Polish each page for grammar and clarity of explanation/examples  
 * Improve performance in regards to memory, it seems webpage can be very RAM greedy especially if open for a while  

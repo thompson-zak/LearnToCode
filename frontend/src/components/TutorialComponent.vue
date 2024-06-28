@@ -17,13 +17,16 @@ const props = defineProps({
 import TutorialTab from './../components/TutorialTab.vue'
 import TutorialContent from './../components/TutorialContent.vue'
 import TutorialFooter from './../components/TutorialFooter.vue'
+import ProgressComponent from './../components/ProgressComponent.vue';
 import TutorialLoadingSlideshow from './TutorialLoadingSlideshow.vue';
 import TutorialReferenceSheet from './reference/TutorialReferenceSheet.vue';
 import { ref } from 'vue';
 import { VueSpinner } from 'vue3-spinners';
 import { useLoginStore } from '@/stores/LoginStore';
+import { useTrackStore } from '@/stores/TrackStore';
 
 const loginStore = useLoginStore();
+const trackStore = useTrackStore();
 
 // Show modal only if they have never seen it before. Closing from this screen will store a value, indicating the page has been visited.
 const showReferenceModal = ref(localStorage.getItem(props.section + "Modal") == null || localStorage.getItem(props.section + "Modal") == "")
@@ -63,7 +66,8 @@ function getOpenAiData() {
   let baseUrl = import.meta.env.VITE_API_URL;
   let endpoint = ""
   if (import.meta.env.VITE_USE_LIVE_DATA == 'true') {
-    endpoint = baseUrl + "?section=" + props.section + "&id=-1"
+    // TODO - add track here
+    endpoint = baseUrl + "?section=" + props.section + "&id=-1&track=" + trackStore.track 
   } else {
     endpoint = baseUrl + "/test"
   }
@@ -132,8 +136,8 @@ function setLocalStorage(item) {
           <div class="grid grid-cols-5 w-full">
             <div class="bg-transparent mr-5 flex flex-1 flex-col justify-between">
   
-              <div>
-                <h1 class="font-bold text-2xl">
+              <div class="p-2 border-4 rounded-lg border-zinc-500">
+                <h1 class="font-bold text-2xl mb-2 border-b-2 border-zinc-500">
                   {{ section }}
                 </h1>
     
@@ -141,6 +145,8 @@ function setLocalStorage(item) {
                   <TutorialTab :tabTitle=exercise.title @click="switchTab(exercise.id)" />
                 </div>
               </div>
+
+              <ProgressComponent></ProgressComponent>
 
               <RouterLink
                 to="/"
@@ -162,6 +168,7 @@ function setLocalStorage(item) {
                 <KeepAlive>
                   <TutorialContent v-if="display == exercise.id"
                     :section=section
+                    :id=display
                     :title=exercise.title
                     :description=sectionDescription
                     :content=content[exercise.listIndex]

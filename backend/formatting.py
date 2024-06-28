@@ -17,37 +17,44 @@ class MLStripper(HTMLParser):
         return self.text.getvalue()
 
 
+def extractOpenAiContent(completion):
+    if not isinstance(completion, dict):
+        completion = vars(completion)
+
+    print("------------Completion------------")
+    print(completion)
+    print("----------------------------------")
+
+    choices = completion.get("choices", None)
+    if choices == None or len(choices) == 0:
+        raise HTTPException("OpenAI response does not contain choices object or choices object is empty")
+    
+    firstChoice = choices[0]
+    if not isinstance(firstChoice, dict):
+        firstChoice = vars(firstChoice)
+    if firstChoice == None or len(firstChoice) == 0:
+        raise HTTPException("OpenAI response first choice is empty.")
+    
+    message = firstChoice.get("message", None)
+    if not isinstance(message, dict):
+        message = vars(message)
+    if message == None or len(message) == 0:
+        raise HTTPException("OpenAI first choice does not contain message or message object is empty")
+    
+    content = message.get("content", None)
+    if content == None or len(content) == 0:
+        raise HTTPException("OpenAI message does not contain content or content string is empty")
+
+    return content
+
+
 def formatCompletions(completionsWithKeys):
     formattedCompletions = {}
     for completionWithKey in completionsWithKeys:
 
         completion = completionWithKey["completion"]
-        if not isinstance(completion, dict):
-            completion = vars(completion)
 
-        print("------------Completion------------")
-        print(completion)
-        print("----------------------------------")
-
-        choices = completion.get("choices", None)
-        if choices == None or len(choices) == 0:
-            raise HTTPException("OpenAI response does not contain choices object or choices object is empty")
-        
-        firstChoice = choices[0]
-        if not isinstance(firstChoice, dict):
-            firstChoice = vars(firstChoice)
-        if firstChoice == None or len(firstChoice) == 0:
-            raise HTTPException("OpenAI response first choice is empty.")
-        
-        message = firstChoice.get("message", None)
-        if not isinstance(message, dict):
-            message = vars(message)
-        if message == None or len(message) == 0:
-            raise HTTPException("OpenAI first choice does not contain message or message object is empty")
-        
-        content = message.get("content", None)
-        if content == None or len(content) == 0:
-            raise HTTPException("OpenAI message does not contain content or content string is empty")
+        content = extractOpenAiContent(completion)
         
         # TODO - change the rely on the <b> and <hr> tags that I ask GPT to insert to mark sections and keywords
 
@@ -87,7 +94,8 @@ def formatCompletions(completionsWithKeys):
             "prompt": promptContent,
             "outline": outlineSteps,
             "code": codeContent,
-            "explanation": explanationContent
+            "explanation": explanationContent,
+            "rawContent": content
         }
 
     print("----- Formatted OpenAI Response Object -----")
@@ -95,6 +103,14 @@ def formatCompletions(completionsWithKeys):
     print("--------------------------------------------")
 
     return formattedCompletions
+
+
+def formatValidityCompletion(completion):
+    content = extractOpenAiContent(completion)
+    contentLowercase = content.lower()
+    return {
+        "isValid": ("yes" in contentLowercase)
+    }
 
 
 def findSectionEndIndex(contentLowercase : str, startIndex : int):
