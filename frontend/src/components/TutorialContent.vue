@@ -93,12 +93,11 @@ function incrementStep() {
 }
 
 function executeCode() {
+  isCodeExecuting.value = true;
   saveCode();
   let outputStore = "";
-
-  // First, remove previous output so there's no confusion
+  // Remove previous output so there's no confusion
   outputResult.value = "";
-  isCodeExecuting.value = true;
 
   // First parameter is endpoint URL, second is header object
   let endpoint = import.meta.env.VITE_API_URL;
@@ -234,8 +233,8 @@ function loadCode() {
           <IconSvg class="bg-gray-600 rounded-full p-1.5 mt-1 mr-1 inline-block" name="lightbulb" size="30px" color="yellow" @click="showHintModal = true"/>
         </div>
         <div class="absolute bottom-0 right-0 z-10">
-          <button class="bg-blue-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="saveCode">Save</button>
-          <button class="bg-green-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" @click="executeCode">Execute</button>
+          <button class="bg-blue-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" :disabled="isCodeExecuting" @click="saveCode">Save</button>
+          <button class="bg-green-400 rounded-lg font-bold text-l border-black border px-2.5 py-1 mb-1 mr-1" :disabled="isCodeExecuting" @click="executeCode">Execute</button>
         </div>
       </div>
 
