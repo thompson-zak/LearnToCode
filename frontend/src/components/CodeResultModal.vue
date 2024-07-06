@@ -19,7 +19,7 @@ const emit = defineEmits(['close']);
         <div class="modal-body">
           <slot name="body">
             <p class="text-green-500" v-if="isSuccess">Has passed! Congrats, you've earned a point!</p>
-            <p class="text-rose-500" v-else>Had some errors. Try again!</p>
+            <p class="text-rose-500" v-else>Didn't quite solve the problem. Try again!</p>
           </slot>
         </div>
 

@@ -160,16 +160,15 @@ function executeCodeValidation(outputStore) {
       console.log(data);
 
       if(data["isValid"]) {
-        showResultModal.value = true;
         showSuccessInResultModal.value = true;
-        outputResult.value = outputStore;
-        isCodeExecuting.value = false;
         pointsStore.updatePoints(1, props.section, props.id);
       } else {
-        showResultModal.value = true;
         showSuccessInResultModal.value = false;
         pointsStore.updatePoints(0, props.section, props.id);
       }
+      showResultModal.value = true;
+      outputResult.value = outputStore;
+      isCodeExecuting.value = false;
     })
 }
 
