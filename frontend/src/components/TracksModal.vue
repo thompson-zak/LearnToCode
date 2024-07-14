@@ -9,7 +9,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-const options = ref(['Sports Science', 'Business', 'Arts & Entertainment', 'Computer Science', 'Education']);
+const options = ref(['Sports Science', 'Business', 'Arts & Entertainment', 'Computer Science', 'Education', 'Healthcare']);
 const selectedTrack = ref('');
 const showError = ref(false);
 const trackStore = useTrackStore();
