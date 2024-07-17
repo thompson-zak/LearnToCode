@@ -77,6 +77,7 @@ def formatCompletions(completionsWithKeys):
             if outlineStep == "":
                 outlineSteps.remove(outlineStep)
 
+        # Sometimes these two sections get messed up. Add a case to swap them if that occurs. Use the "```python" string as an indicator
         codeStartIndex = contentLowercase.index(endBoldTagKeyword, outlineEndIndex)
         codeEndIndex = findSectionEndIndex(contentLowercase, codeStartIndex)
         codeContent = stripTags(content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ]).strip()

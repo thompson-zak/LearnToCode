@@ -1,10 +1,19 @@
 <script setup>
 const props = defineProps({
   show: Boolean,
-  isSuccess: Boolean
+  isSuccess: Boolean,
+  title: Boolean,
+  exampleCode: String,
+  explanation: String
 })
 
 const emit = defineEmits(['close']);
+const cmReadOnlyOptions = {
+  mode: "text/x-python", // Language mode
+  theme: "dracula", // Theme
+  readOnly: true, // Read Only
+  autoRefresh: true, // Allow for autorefresh
+}
 
 </script>
 
@@ -13,20 +22,32 @@ const emit = defineEmits(['close']);
     <div v-if="props.show" class="modal-mask">
       <div class="modal-container">
         <div class="modal-header">
-          <slot name="header">Your code....</slot>
+          <slot name="header">
+            {{ title }}
+          </slot>
         </div>
 
         <div class="modal-body">
           <slot name="body">
-            <p class="text-green-500" v-if="isSuccess">Has passed! Congrats, you've earned a point!</p>
-            <p class="text-rose-500" v-else>Didn't quite solve the problem. Try again!</p>
+            <div class="flex-grow overflow-y-auto">
+                <span>
+                    <Codemirror
+                    v-bind:value="exampleCode"
+                    :options="cmReadOnlyOptions"
+                    />
+                </span>
+                <hr/>
+                <span>
+                    {{ explanation }}
+                </span>
+            </div>
           </slot>
         </div>
 
         <div class="modal-footer">
           <slot name="footer">
-            <button class="modal-default-button rounded-lg border border-transparent px-3 py-2 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="emit('close')">
-              Continue
+            <button class="modal-default-button rounded-lg border border-gray-300 px-3 py-2 transition-colors hover:bg-green-300 hover:dark:bg-green-800/30" @click="emit('close')">
+              Got it!
             </button>
           </slot>
         </div>
@@ -35,7 +56,6 @@ const emit = defineEmits(['close']);
   </Transition>
 </template>
 
-<style src="vue-multiselect/dist/vue-multiselect.esm.css"></style>
 <style>
 .modal-mask {
   position: fixed;
@@ -50,7 +70,7 @@ const emit = defineEmits(['close']);
 }
 
 .modal-container {
-  width: 400px;
+  width: 50%;
   margin: auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -62,7 +82,8 @@ const emit = defineEmits(['close']);
 .modal-header {
   margin-top: 0;
   color: black;
-  font-weight: 500;
+  font-weight: 700;
+  font-size: x-large;
 }
 
 .modal-body {
