@@ -95,8 +95,6 @@ def formatCompletions(completionsWithKeys):
         else:
             assumedExplanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ]
         assumedExplanationContent = stripTags(assumedExplanationContent).strip()
-        print("Assumed Explanation Content")
-        print(assumedExplanationContent)
         if "```python" in explanationContent:
             codeContent = assumedExplanationContent
         else:
