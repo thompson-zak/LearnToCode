@@ -24,8 +24,9 @@ const props = defineProps({
 
 import { ref } from 'vue'
 import { VueSpinnerGears } from 'vue3-spinners';
-import TutorialReferenceSheet from './reference/TutorialReferenceSheet.vue';
-import Modal from '../components/CodeResultModal.vue';
+import CodeResultModal from '../components/CodeResultModal.vue';
+import ReferenceModal from '../components/reference/ReferenceModal.vue';
+import ExampleCodeModal from '../components/ExampleCodeModal.vue';
 import { useLoginStore } from '@/stores/LoginStore';
 import { usePointsStore } from '@/stores/PointsStore';
 
@@ -66,13 +67,6 @@ const cmOptions = {
 
 const cmReadOnlyOptionsOutput = {
   mode: null, // Language mode
-  theme: "dracula", // Theme
-  readOnly: true, // Read Only
-  autoRefresh: true, // Allow for autorefresh
-}
-
-const cmReadOnlyOptions = {
-  mode: "text/x-python", // Language mode
   theme: "dracula", // Theme
   readOnly: true, // Read Only
   autoRefresh: true, // Allow for autorefresh
@@ -204,7 +198,7 @@ function loadCode() {
 
       <div class="grid grid-cols-10 w-full font-medium text-l my-3">
           <span class="col-span-8">
-            <span>Step {{ currentOutlineStep + 1 }}:</span>
+            <span>Step {{ currentOutlineStep + 1 }} of {{ props.content["outline"].length }}:</span>
             <span>{{ content["outline"][currentOutlineStep] }}</span>
           </span>
 
@@ -251,46 +245,16 @@ function loadCode() {
         />
       </div>
 
-      <!-- Build out reference modal in component to allow for per section customization -->
-      <vue-final-modal
-        v-bind="$attrs"
-        v-model="showReferenceModal"
-        classes="flex justify-center items-center"
-        content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
-      >
-        <TutorialReferenceSheet :section=section title="Reference Sheet"/>
-        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showReferenceModal = false">
-          <IconSvg name="x" size="15px" />
-        </button>
-      </vue-final-modal>
-
-      <vue-final-modal
-        v-bind="$attrs"
-        v-model="showHintModal"
-        classes="flex justify-center items-center"
-        content-class="relative flex flex-col max-h-full w-3/5 mx-4 p-4 border dark:border-gray-800 rounded bg-white dark:bg-gray-900"
-      >
-        <span class="mr-8 text-2xl font-bold">
-          <h4>Code Hints and Explanation</h4>
-        </span>
-        <hr/>
-        <div class="flex-grow overflow-y-auto">
-          <span>
-            <Codemirror
-              v-model:value="exampleCode"
-              :options="cmReadOnlyOptions"
-            />
-          </span>
-          <hr/>
-          <span>{{ content["explanation"] }}</span>
-        </div>
-        <button class="absolute top-0 right-0 mt-2 mr-2 p-2 rounded-lg hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30" @click="showHintModal = false">
-          <IconSvg name="x" size="15px" />
-        </button>
-      </vue-final-modal>
+      <Teleport to="body">
+        <ReferenceModal :show="showReferenceModal" :section=section title="Reference Sheet" @close="showReferenceModal = false" />
+      </Teleport>
 
       <Teleport to="body">
-        <modal :show="showResultModal" :isSuccess="showSuccessInResultModal" @close="showResultModal = false"></modal>
+        <ExampleCodeModal :show="showHintModal" title="Code Hints and Explanation" :exampleCode=exampleCode :explanation="content['explanation']" @close="showHintModal = false" />
+      </Teleport>
+
+      <Teleport to="body">
+        <CodeResultModal :show="showResultModal" :isSuccess="showSuccessInResultModal" @close="showResultModal = false" />
       </Teleport>
 
   </div>

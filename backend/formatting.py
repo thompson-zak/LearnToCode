@@ -55,8 +55,6 @@ def formatCompletions(completionsWithKeys):
         completion = completionWithKey["completion"]
 
         content = extractOpenAiContent(completion)
-        
-        # TODO - change the rely on the <b> and <hr> tags that I ask GPT to insert to mark sections and keywords
 
         contentLowercase = content.lower()
         endBoldTagKeyword = "</b>"
@@ -77,18 +75,30 @@ def formatCompletions(completionsWithKeys):
             if outlineStep == "":
                 outlineSteps.remove(outlineStep)
 
+        # OpenAI can sometimes switch order of code and explanation, so we need checks to make sure it can be interpreted both ways.
+        codeContent = ""
+        explanationContent = ""
+
         codeStartIndex = contentLowercase.index(endBoldTagKeyword, outlineEndIndex)
         codeEndIndex = findSectionEndIndex(contentLowercase, codeStartIndex)
-        codeContent = stripTags(content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ]).strip()
+        assumedCodeContent = stripTags(content[ codeStartIndex + len(endBoldTagKeyword) : codeEndIndex ]).strip()
+        if "```python" in assumedCodeContent:
+            codeContent = assumedCodeContent
+        else:
+            explanationContent = assumedCodeContent
 
         explanationStartIndex = contentLowercase.index(endBoldTagKeyword, codeEndIndex)
         explanationEndIndex = findSectionEndIndex(contentLowercase, explanationStartIndex)
         # If end index is -1, then <hr> and <b> tag was not found from the beginning of the last block to end of text. Therefore, take end of string as final index.
         if explanationEndIndex == -1:
-            explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : ]
+            assumedExplanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : ]
         else:
-            explanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ]
-        explanationContent = stripTags(explanationContent).strip()
+            assumedExplanationContent = content[ explanationStartIndex + len(endBoldTagKeyword) : explanationEndIndex ]
+        assumedExplanationContent = stripTags(assumedExplanationContent).strip()
+        if "```python" in explanationContent:
+            codeContent = assumedExplanationContent
+        else:
+            explanationContent = assumedExplanationContent
 
         formattedCompletions[completionWithKey["key"]] = {
             "prompt": promptContent,
