@@ -88,6 +88,6 @@ def runCode(code : str):
     # set globals parameter to none
     globalsParameter = {'__builtins__' : None}
     # set locals parameter to take only print()
-    localsParameter = {'print': print}
+    localsParameter = {'print': print, 'str': str}
     # successful execution will result in None returned
     return exec(code, globalsParameter, localsParameter)

@@ -2,7 +2,7 @@
 const props = defineProps({
   show: Boolean,
   isSuccess: Boolean,
-  title: Boolean,
+  title: String,
   exampleCode: String,
   explanation: String
 })
